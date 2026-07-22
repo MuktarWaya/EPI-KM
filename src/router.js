@@ -100,6 +100,23 @@ export async function handleRequest(request, env) {
     return new Response(JSON.stringify(res), { headers: { 'Content-Type': 'application/json' } });
   }
 
+  if (pathname === '/api/analytics/dashboard') {
+    let params = {};
+    if (method === 'POST') {
+      try { params = await request.json(); } catch(e) {}
+    } else {
+      params = {
+        startDate: url.searchParams.get('startDate') || '',
+        endDate: url.searchParams.get('endDate') || '',
+        village: url.searchParams.get('village') || 'ALL',
+        subdistrict: url.searchParams.get('subdistrict') || 'ALL',
+        sessionId: url.searchParams.get('sessionId') || ''
+      };
+    }
+    const res = await callGasApi(env, 'GET_DASHBOARD_ANALYTICS', params);
+    return new Response(JSON.stringify(res), { headers: { 'Content-Type': 'application/json' } });
+  }
+
   // Fallback to Static Asset Asset Server or SPA HTML
   return null;
 }

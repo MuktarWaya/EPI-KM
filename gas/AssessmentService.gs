@@ -21,7 +21,10 @@ function registerParentAndChild(data) {
       BirthDate: data.birthDate,
       AgeMonths: ageMonths,
       Gender: sanitizeInput(data.gender || 'ไม่ระบุ'),
-      Village: sanitizeInput(data.village),
+      HouseNo: sanitizeInput(data.houseNo || ''),
+      Village: sanitizeInput(data.village || ''),
+      Subdistrict: sanitizeInput(data.subdistrict || ''),
+      District: sanitizeInput(data.district || ''),
       VolunteerName: sanitizeInput(data.volunteerName || ''),
       HasVaccineBook: data.hasVaccineBook ? 'YES' : 'NO',
       Consent: data.consent ? 'YES' : 'NO',
@@ -184,3 +187,99 @@ function generateAssessmentFlags(assessment) {
     });
   });
 }
+
+function getDashboardAnalytics(data) {
+  var filterStartDate = data && data.startDate ? data.startDate : '';
+  var filterEndDate = data && data.endDate ? data.endDate : '';
+  var filterVillage = data && data.village ? data.village : 'ALL';
+  var filterSubdistrict = data && data.subdistrict ? data.subdistrict.trim().toLowerCase() : 'ALL';
+  var filterSessionId = data && data.sessionId ? data.sessionId : '';
+
+  // Get Children map
+  var children = getSheetData('Children') || [];
+  var childMap = {};
+  children.forEach(function(c) {
+    if (c.RecordID) childMap[c.RecordID] = c;
+  });
+
+  // Get KS Model Assessments
+  var ksRecords = getSheetData('AcceptanceAssessment') || [];
+  var filteredKs = ksRecords.filter(function(row) {
+    var record = childMap[row.RecordID] || {};
+    var dateStr = row.SubmittedAt ? row.SubmittedAt.substring(0, 10) : '';
+
+    if (filterSessionId && row.SessionID !== filterSessionId && filterSessionId !== 'ALL') {
+      return false;
+    }
+    if (filterStartDate && dateStr < filterStartDate) return false;
+    if (filterEndDate && dateStr > filterEndDate) return false;
+    if (filterVillage && filterVillage !== 'ALL' && record.Village !== filterVillage) return false;
+    if (filterSubdistrict && filterSubdistrict !== 'all' && filterSubdistrict !== '') {
+      var sub = (record.Subdistrict || '').toLowerCase();
+      if (sub.indexOf(filterSubdistrict) === -1) return false;
+    }
+    return true;
+  });
+
+  // Get PreTest Assessments
+  var preRecords = getSheetData('PreTest') || [];
+  var filteredPre = preRecords.filter(function(row) {
+    var record = childMap[row.RecordID] || {};
+    var dateStr = row.SubmittedAt ? row.SubmittedAt.substring(0, 10) : '';
+
+    if (filterSessionId && row.SessionID !== filterSessionId && filterSessionId !== 'ALL') {
+      return false;
+    }
+    if (filterStartDate && dateStr < filterStartDate) return false;
+    if (filterEndDate && dateStr > filterEndDate) return false;
+    if (filterVillage && filterVillage !== 'ALL' && record.Village !== filterVillage) return false;
+    if (filterSubdistrict && filterSubdistrict !== 'all' && filterSubdistrict !== '') {
+      var sub = (record.Subdistrict || '').toLowerCase();
+      if (sub.indexOf(filterSubdistrict) === -1) return false;
+    }
+    return true;
+  });
+
+  // Compute KS Model Item Averages Q1..Q8
+  var ksItemSums = [0, 0, 0, 0, 0, 0, 0, 0];
+  var ksTotalScoreSum = 0;
+  var ksCount = filteredKs.length;
+
+  filteredKs.forEach(function(row) {
+    var sumRow = 0;
+    for (var i = 1; i <= 8; i++) {
+      var val = Number(row['Q' + i] || 0);
+      ksItemSums[i - 1] += val;
+      sumRow += val;
+    }
+    ksTotalScoreSum += sumRow;
+  });
+
+  var ksItemAverages = ksItemSums.map(function(sum) {
+    return ksCount > 0 ? (sum / ksCount).toFixed(2) : 0;
+  });
+  var ksOverallAvg = ksCount > 0 ? (ksTotalScoreSum / (ksCount * 8)).toFixed(2) : 0;
+
+  // Compute PreTest Averages
+  var preTotalScoreSum = 0;
+  var preCount = filteredPre.length;
+  filteredPre.forEach(function(row) {
+    preTotalScoreSum += Number(row.TotalScore || 0);
+  });
+  var preOverallAvg = preCount > 0 ? (preTotalScoreSum / preCount).toFixed(2) : 0;
+
+  return standardResponse(true, 'ดึงข้อมูล analytics สำเร็จ', {
+    totalRespondents: ksCount,
+    preTestCount: preCount,
+    preTestAvgScore: preOverallAvg,
+    ksOverallAvg: ksOverallAvg,
+    ksItemAverages: ksItemAverages,
+    filterApplied: {
+      startDate: filterStartDate,
+      endDate: filterEndDate,
+      village: filterVillage,
+      subdistrict: filterSubdistrict
+    }
+  });
+}
+

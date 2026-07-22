@@ -44,16 +44,33 @@
       </p>
       
       <!-- MAIN PARENT ACTION BUTTON (PROMINENT) -->
-      <div style="margin-bottom: 28px;">
-        <button class="btn btn--primary" style="padding: 16px 24px; font-size: 20px; box-shadow: var(--shadow-md);" onclick="navigateTo('page-consent')">
-          🚀 เริ่มต้นสำหรับผู้ปกครอง
+      <div style="margin-bottom: 24px;">
+        <button class="btn btn--primary" style="padding: 16px 24px; font-size: 20px; box-shadow: var(--shadow-md); width: 100%;" onclick="navigateTo('page-consent')">
+          🚀 เริ่มต้นสำหรับผู้ปกครอง (ก่อนฟังบรรยาย)
         </button>
+      </div>
+
+      <!-- POST-LECTURE ACTIVITIES CARD -->
+      <div class="alert-card" style="background: #F0FFF4; border-color: var(--green); margin-bottom: 24px;">
+        <h4 style="font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 8px;">🎯 กิจกรรมและแบบประเมินหลังฟังบรรยาย</h4>
+        <p style="font-size: 13px; margin-bottom: 12px;">เมื่อฟังการบรรยายจากวิทยากรจบแล้ว สามารถเข้าทำกิจกรรมและทดสอบความเข้าใจได้ที่นี่:</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn btn--soft" style="width: 100%; text-align: left; justify-content: flex-start; background: #E6FFFA;" onclick="navigateTo('page-quiz-game')">
+            🎮 1. เกมประเมินอาการหลังฉีด (เขียว - เหลือง - แดง)
+          </button>
+          <button class="btn btn--soft" style="width: 100%; text-align: left; justify-content: flex-start; background: #EBF8FF;" onclick="startPostTest()">
+            ✍️ 2. ทำแบบประเมินความรู้หลังเรียน (Post-test)
+          </button>
+        </div>
       </div>
 
       <!-- DISCREET TRAINER / STAFF SECTION AT BOTTOM -->
       <div style="border-top: 2px dashed #D9CBA8; padding-top: 14px; margin-top: 10px;">
         <p style="font-size: 12px; font-weight: 700; color: #777; margin-bottom: 8px;">🔒 สำหรับวิทยากร / เจ้าหน้าที่:</p>
         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <button class="btn btn--primary" style="padding: 6px 12px; font-size: 12px; background: #2B6CB0;" onclick="openInstructorDashboard()">
+            📊 Dashboard คืนข้อมูล (เฉพาะฉัน)
+          </button>
           <button class="btn btn--soft" style="padding: 6px 12px; font-size: 12px;" onclick="navigateTo('page-presenter')">
             🎤 โหมดวิทยากร
           </button>
@@ -122,6 +139,10 @@
           <span id="ageDisplay" style="font-size: 13px; font-weight: 700; color: var(--green); display: block; margin-top: 4px;"></span>
         </div>
         <div class="form-group">
+          <label class="form-label">บ้านเลขที่ *</label>
+          <input type="text" class="form-control" id="houseNo" required placeholder="เช่น 12/3">
+        </div>
+        <div class="form-group">
           <label class="form-label">หมู่บ้าน *</label>
           <select class="form-control" id="village" required>
             <option value="">-- เลือกหมู่บ้าน --</option>
@@ -135,6 +156,14 @@
             <option value="หมู่ที่ 8">หมู่ที่ 8</option>
             <option value="หมู่ที่ 9">หมู่ที่ 9</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ตำบล *</label>
+          <input type="text" class="form-control" id="subdistrict" required placeholder="เช่น ประจัน หรือ สาคอ">
+        </div>
+        <div class="form-group">
+          <label class="form-label">อำเภอ *</label>
+          <input type="text" class="form-control" id="district" required placeholder="เช่น มายอ">
         </div>
         <button type="submit" class="btn btn--primary" style="margin-top: 12px;">บันทึกข้อมูลและถัดไป</button>
       </form>
@@ -346,6 +375,126 @@
       <button class="btn" onclick="navigateTo('page-landing')">กลับหน้าหลัก</button>
     </section>
 
+    <!-- PAGE 10: PRE-LECTURE COMPLETE (STOPPING POINT FOR PARENTS BEFORE LECTURE) -->
+    <section id="page-pre-lecture-complete" class="card" style="display: none; text-align: center;">
+      <div class="card-title" style="justify-content: center;">
+        <div class="icon-tile">🌸</div>
+        <span>เสร็จสิ้นการประเมินเบื้องต้น</span>
+      </div>
+      <div class="alert-card" style="background: #F0FFF4; border-color: var(--green); margin: 20px 0; padding: 24px;">
+        <h2 style="color: var(--green); font-size: 22px; margin-bottom: 12px;">ขอบคุณผู้ปกครองทุกท่าน! 🎉</h2>
+        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 8px;">
+          ท่านได้ลงทะเบียนและทำแบบประเมินความรู้เบื้องต้นเรียบร้อยแล้ว
+        </p>
+        <p style="font-size: 18px; font-weight: 700; color: var(--blue);">
+          📢 โปรดรอฟังการบรรยายและร่วมกิจกรรมจากวิทยากร
+        </p>
+      </div>
+      <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
+        เมื่อฟังบรรยายเสร็จสิ้นแล้ว ผู้ปกครองสามารถกลับมาเล่นเกมและทำแบบทดสอบหลังเรียนได้ที่ <strong>"หน้าหลัก"</strong>
+      </p>
+      <button class="btn btn--primary" style="padding: 12px 24px; font-size: 18px;" onclick="navigateTo('page-landing')">
+        🏠 กลับสู่หน้าหลัก
+      </button>
+    </section>
+
+    <!-- PAGE 11: INSTRUCTOR INTERACTIVE DASHBOARD (โหมดคืนข้อมูลเฉพาะฉัน) -->
+    <section id="page-instructor-dashboard" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">📊</div>
+        <span>Interactive Dashboard คืนข้อมูล (สำหรับวิทยากร)</span>
+      </div>
+
+      <!-- FILTER CONTROL PANEL -->
+      <div class="alert-card" style="background: #F7FAFC; border: 2px solid var(--blue); margin-bottom: 20px;">
+        <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">🔍 ตัวกรองข้อมูล (Interactive Filters)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 12px;">วันที่เริ่มต้น</label>
+            <input type="date" class="form-control" id="dashStartDate">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 12px;">วันที่สิ้นสุด</label>
+            <input type="date" class="form-control" id="dashEndDate">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 12px;">ตำบล (พิมพ์ระบุ หรือ 'ทั้งหมด')</label>
+            <input type="text" class="form-control" id="dashSubdistrict" placeholder="เช่น ประจัน หรือ ทั้งหมด">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 12px;">หมู่บ้าน</label>
+            <select class="form-control" id="dashVillage">
+              <option value="ALL">ทุกหมู่บ้าน</option>
+              <option value="หมู่ที่ 1">หมู่ที่ 1</option>
+              <option value="หมู่ที่ 2">หมู่ที่ 2</option>
+              <option value="หมู่ที่ 3">หมู่ที่ 3</option>
+              <option value="หมู่ที่ 4">หมู่ที่ 4</option>
+              <option value="หมู่ที่ 5">หมู่ที่ 5</option>
+              <option value="หมู่ที่ 6">หมู่ที่ 6</option>
+              <option value="หมู่ที่ 7">หมู่ที่ 7</option>
+              <option value="หมู่ที่ 8">หมู่ที่ 8</option>
+              <option value="หมู่ที่ 9">หมู่ที่ 9</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 14px; text-align: right;">
+          <button class="btn btn--primary" style="padding: 8px 20px;" onclick="loadDashboardAnalytics()">
+            🔍 กรองข้อมูล
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI SUMMARY GRID -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div class="card" style="padding: 14px; text-align: center; background: #EDF2F7; margin: 0;">
+          <p style="font-size: 12px; font-weight: 700; color: #4A5568;">จำนวนผู้ตอบทั้งหมด</p>
+          <h2 id="kpiRespondents" style="font-size: 26px; color: #2B6CB0; margin-top: 4px;">0 คน</h2>
+        </div>
+        <div class="card" style="padding: 14px; text-align: center; background: #EBF8FF; margin: 0;">
+          <p style="font-size: 12px; font-weight: 700; color: #2B6CB0;">คะแนนเฉลี่ย Pre-test</p>
+          <h2 id="kpiPreAvg" style="font-size: 26px; color: var(--blue); margin-top: 4px;">0.00 / 10</h2>
+        </div>
+        <div class="card" style="padding: 14px; text-align: center; background: #F0FFF4; margin: 0;">
+          <p style="font-size: 12px; font-weight: 700; color: var(--green);">คะแนนเฉลี่ยรวม KS Model</p>
+          <h2 id="kpiKsAvg" style="font-size: 26px; color: var(--green); margin-top: 4px;">0.00 / 5.00</h2>
+        </div>
+      </div>
+
+      <!-- CHART SECTION -->
+      <div class="card" style="padding: 16px; margin-bottom: 20px;">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--ink);">
+          📊 ค่าเฉลี่ยการตอบแบบประเมิน KS Model แยกตามข้อ (1 - 5 คะแนน)
+        </h3>
+        <div style="position: relative; min-height: 280px;">
+          <canvas id="ksChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- ITEM DETAIL TABLE FOR SERVICE IMPROVEMENT -->
+      <div class="card" style="padding: 16px; margin-bottom: 20px;">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">
+          📋 ตารางผลคะแนนเฉลี่ยรายข้อ เพื่อนำไปปรับปรุงการจัดบริการ
+        </h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="background: #EDF2F7; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อที่ & หัวข้อแบบประเมิน</th>
+                <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 100px;">ค่าเฉลี่ย (1-5)</th>
+                <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 120px;">ระดับการยอมรับ</th>
+                <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อแนะนำแก้ปัญหา/จัดบริการ</th>
+              </tr>
+            </thead>
+            <tbody id="ksItemTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <button class="btn" onclick="navigateTo('page-landing')">🏠 กลับหน้าหลัก</button>
+    </section>
+
   </main>
 
   <script>
@@ -502,7 +651,10 @@
         phone: document.getElementById('phone').value,
         childName: document.getElementById('childName').value,
         birthDate: document.getElementById('birthDate').value,
+        houseNo: document.getElementById('houseNo') ? document.getElementById('houseNo').value : '',
         village: document.getElementById('village').value,
+        subdistrict: document.getElementById('subdistrict') ? document.getElementById('subdistrict').value : '',
+        district: document.getElementById('district') ? document.getElementById('district').value : '',
         consent: true,
         hasVaccineBook: true
       };
@@ -671,14 +823,15 @@
         const result = await res.json();
         Swal.close();
         if (result.success) {
-          renderPersonalizedLearning(result.data.personalizedFlags);
-          navigateTo('page-learning');
+          Swal.fire('ประเมินสำเร็จ', 'บันทึกข้อมูลการประเมินเบื้องต้นเรียบร้อยแล้ว', 'success').then(() => {
+            navigateTo('page-pre-lecture-complete');
+          });
         } else {
           Swal.fire('ผิดพลาด', result.message, 'error');
         }
       } catch (e) {
         Swal.close();
-        Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการประมวลผล', 'error');
+        navigateTo('page-pre-lecture-complete');
       }
     }
 
@@ -806,6 +959,170 @@
 
     function exportFollowUpCsv() {
       window.location.href = `/api/export/${currentSessionId}/followup.csv`;
+    }
+
+    let ksChartInstance = null;
+
+    function openInstructorDashboard() {
+      const today = new Date().toISOString().substring(0, 10);
+      if (!document.getElementById('dashStartDate').value) {
+        document.getElementById('dashStartDate').value = today;
+      }
+      if (!document.getElementById('dashEndDate').value) {
+        document.getElementById('dashEndDate').value = today;
+      }
+      navigateTo('page-instructor-dashboard');
+      loadDashboardAnalytics();
+    }
+
+    async function loadDashboardAnalytics() {
+      const startDate = document.getElementById('dashStartDate').value || '';
+      const endDate = document.getElementById('dashEndDate').value || '';
+      const village = document.getElementById('dashVillage').value || 'ALL';
+      const subdistrict = (document.getElementById('dashSubdistrict').value || '').trim();
+
+      Swal.fire({ title: 'กำลังโหลดข้อมูลวิเคราะห์...', didOpen: () => Swal.showLoading() });
+      try {
+        const query = new URLSearchParams({
+          startDate,
+          endDate,
+          village,
+          subdistrict,
+          sessionId: currentSessionId
+        });
+        const res = await fetch(`/api/analytics/dashboard?${query.toString()}`);
+        const data = await res.json();
+        Swal.close();
+
+        if (data.success && data.data) {
+          const stats = data.data;
+          document.getElementById('kpiRespondents').innerText = `${stats.totalRespondents || 0} คน`;
+          document.getElementById('kpiPreAvg').innerText = `${stats.preTestAvgScore || '0.00'} / 10`;
+          document.getElementById('kpiKsAvg').innerText = `${stats.ksOverallAvg || '0.00'} / 5.00`;
+
+          renderKsChart(stats.ksItemAverages || [0,0,0,0,0,0,0,0]);
+          renderKsItemTable(stats.ksItemAverages || [0,0,0,0,0,0,0,0]);
+        } else {
+          Swal.fire('ข้อความเตือน', data.message || 'ไม่สามารถโหลดข้อมูลได้', 'warning');
+        }
+      } catch (err) {
+        Swal.close();
+        Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อดึงข้อมูลวิเคราะห์ได้', 'error');
+      }
+    }
+
+    function renderKsChart(averages) {
+      const ctx = document.getElementById('ksChartCanvas').getContext('2d');
+      const labels = [
+        'Q1.วัคซีนจำเป็น',
+        'Q2.เชื่อมั่นเจ้าหน้าที่',
+        'Q3.ผู้นำสนับสนุน',
+        'Q4.พามาตามนัด',
+        'Q5.กังวลผลข้างเคียง',
+        'Q6.โชคชะตา/ศาสนา',
+        'Q7.อุปสรรคเดินทาง',
+        'Q8.โซเชียลมีเดีย'
+      ];
+
+      const barColors = averages.map((avg, i) => {
+        const val = Number(avg);
+        if (i === 4 || i === 5 || i === 6 || i === 7) {
+          // Negative concerns: lower is better, higher indicates high worry
+          return val >= 3.5 ? '#E53E3E' : (val >= 2.5 ? '#DD6B20' : '#38A169');
+        } else {
+          // Positive attitudes: higher is better
+          return val >= 4.0 ? '#38A169' : (val >= 3.0 ? '#DD6B20' : '#E53E3E');
+        }
+      });
+
+      if (ksChartInstance) {
+        ksChartInstance.destroy();
+      }
+
+      ksChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'คะแนนเฉลี่ย (1 - 5 คะแนน)',
+            data: averages,
+            backgroundColor: barColors,
+            borderColor: '#2D3748',
+            borderWidth: 1.5,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: 1,
+              max: 5,
+              ticks: { stepSize: 1 }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function renderKsItemTable(averages) {
+      const tbody = document.getElementById('ksItemTableBody');
+      tbody.innerHTML = '';
+
+      const items = [
+        { text: '1. เชื่อว่าวัคซีนมีความจำเป็นและช่วยป้องกันโรคร้ายแรงในเด็กได้จริง', isPositive: true, recHigh: 'ความเชื่อมั่นสูง ให้เน้นย้ำความต่อเนื่อง', recLow: 'เน้นย้ำกลไกการสร้างภูมิคุ้มกันของวัคซีนระหว่างบรรยาย' },
+        { text: '2. เชื่อมั่นในข้อมูลวัคซีนจากแพทย์ พยาบาล หรือเจ้าหน้าที่สาธารณสุข', isPositive: true, recHigh: 'สัมพันธภาพดี รักษาสัมพันธภาพต่อเนื่อง', recLow: 'สร้างความคุ้นเคย และเปิดโอกาสให้ซักถามข้อสงสัย' },
+        { text: '3. ผู้นำศาสนาหรือผู้นำชุมชนส่งเสริมให้เด็กฉีดวัคซีน', isPositive: true, recHigh: 'ใช้พลังผู้นำชุมชนช่วยสื่อสารสร้างความมั่นใจ', recLow: 'ประสานผู้นำศาสนา/ชุมชนร่วมชี้แจงความสำคัญ' },
+        { text: '4. ยินดีพาลูกไปฉีดวัคซีนตามนัดทุกครั้ง', isPositive: true, recHigh: 'ความตั้งใจดี ให้ระบบแจ้งเตือนวันนัด', recLow: 'ติดตามผ่าน อสม. ช่วยกระตุ้นวันนัดใกล้ถึง' },
+        { text: '5. กังวลเรื่องผลข้างเคียงหรือสารเจือปนในวัคซีน (ฮาลาล/ความปลอดภัย)', isPositive: false, recHigh: '⚠️ มีความกังวลสูง: ต้องเน้นบรรยายเรื่องความปลอดภัยและฮาลาล', recLow: 'ความกังวลน้อย ให้ข้อมูลตามมาตรฐาน' },
+        { text: '6. เชื่อว่าการเจ็บป่วยเป็นเรื่องของโชคชะตา ไม่จำเป็นต้องรับวัคซีน', isPositive: false, recHigh: '⚠️ มีความเชื่อขัดแย้ง: ให้สื่อสารตามหลักศาสนาเรื่องการป้องกันดูแล', recLow: 'มีความเข้าใจถูกต้องตามหลักการดูแลสุขภาพ' },
+        { text: '7. มีอุปสรรคในการเดินทางหรือเวลาทำงาน ทำให้ไม่สะดวกพาลูกไปรับวัคซีน', isPositive: false, recHigh: '⚠️ มีอุปสรรคสูง: จัดนัดยืดหยุ่น หรือประสาน อสม. ช่วยเหลือ', recLow: 'ไม่มีอุปสรรคการเดินทาง' },
+        { text: '8. คนรอบข้างหรือโซเชียลมีเดียทำให้ลังเลที่จะให้ลูกฉีดวัคซีน', isPositive: false, recHigh: '⚠️ ได้รับข่าวลบ: แจกอินโฟกราฟิกความจริงเรื่องวัคซีนแก้ข่าวลือ', recLow: 'รับรู้ข่าวสารถูกต้อง' }
+      ];
+
+      items.forEach((item, i) => {
+        const avg = Number(averages[i] || 0);
+        let statusTag = '';
+        let advice = '';
+
+        if (item.isPositive) {
+          if (avg >= 4.0) {
+            statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">สูงมาก</span>';
+            advice = item.recHigh;
+          } else if (avg >= 3.0) {
+            statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">ปานกลาง</span>';
+            advice = item.recLow;
+          } else {
+            statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">ต่ำ (ต้องแก้ไข)</span>';
+            advice = item.recLow;
+          }
+        } else {
+          // Negative items
+          if (avg >= 3.5) {
+            statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">กังวลสูง (ต้องแก้ไข)</span>';
+            advice = item.recHigh;
+          } else if (avg >= 2.5) {
+            statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">กังวลปานกลาง</span>';
+            advice = item.recHigh;
+          } else {
+            statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">กังวลต่ำ</span>';
+            advice = item.recLow;
+          }
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="padding: 8px; border: 1px solid #CBD5E0;">${item.text}</td>
+          <td style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; font-weight: 700;">${avg.toFixed(2)}</td>
+          <td style="padding: 8px; border: 1px solid #CBD5E0; text-align: center;">${statusTag}</td>
+          <td style="padding: 8px; border: 1px solid #CBD5E0;">${advice}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
   </script>
 </body>

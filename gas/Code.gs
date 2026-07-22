@@ -83,6 +83,9 @@ function handleApiRoute(action, data) {
     case 'EXPORT_FOLLOWUP_CSV':
       return exportSessionFollowUpCsv(data.sessionId);
 
+    case 'GET_DASHBOARD_ANALYTICS':
+      return getDashboardAnalytics(data);
+
     default:
       return standardResponse(false, 'ไม่พบ Action ที่ระบุ: ' + action, null, 'INVALID_ACTION');
   }
