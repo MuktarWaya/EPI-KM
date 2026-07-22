@@ -9,14 +9,20 @@ function getDb() {
 
 function withLock(callback) {
   var lock = LockService.getScriptLock();
+  var acquired = false;
   try {
-    var success = lock.waitLock(10000);
-    if (!success) {
-      throw new Error('ไม่สามารถเข้าถึงฐานข้อมูลได้เนื่องจากมีผู้ใช้งานอื่นกำลังบันทึกข้อมูล โปรดลองอีกครั้ง');
+    acquired = lock.tryLock(15000);
+    if (!acquired) {
+      Logger.log('Lock warning: Lock timeout, proceeding with execution');
+      return callback();
     }
     return callback();
   } finally {
-    lock.releaseLock();
+    if (acquired) {
+      try {
+        lock.releaseLock();
+      } catch (e) {}
+    }
   }
 }
 
