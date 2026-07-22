@@ -39,23 +39,31 @@
         <div class="icon-tile">👶</div>
         <span>ยินดีต้อนรับสู่ คลินิกวัคซีนเด็ก 0-5 ปี</span>
       </div>
-      <p style="margin-bottom: 16px;">
+      <p style="margin-bottom: 20px; font-size: 16px;">
         ตรวจสอบความรู้ คลายความกังวล และวางแผนพาลูกมารับวัคซีนอย่างมั่นใจ ร่วมสร้างภูมิคุ้มกันเพื่ออนาคตที่สดใสของลูกรัก
       </p>
       
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <button class="btn btn--primary" onclick="navigateTo('page-consent')">
+      <!-- MAIN PARENT ACTION BUTTON (PROMINENT) -->
+      <div style="margin-bottom: 28px;">
+        <button class="btn btn--primary" style="padding: 16px 24px; font-size: 20px; box-shadow: var(--shadow-md);" onclick="navigateTo('page-consent')">
           🚀 เริ่มต้นสำหรับผู้ปกครอง
         </button>
-        <button class="btn btn--soft" onclick="navigateTo('page-presenter')">
-          🎤 โหมดวิทยากร (Presenter View)
-        </button>
-        <button class="btn btn--soft" onclick="navigateTo('page-audience')">
-          📺 จอแสดงผลเรียนรู้สด (Audience Screen)
-        </button>
-        <button class="btn" onclick="navigateTo('page-admin')">
-          📋 ระบบเจ้าหน้าที่ & สรุปส่งมอบงาน
-        </button>
+      </div>
+
+      <!-- DISCREET TRAINER / STAFF SECTION AT BOTTOM -->
+      <div style="border-top: 2px dashed #D9CBA8; padding-top: 14px; margin-top: 10px;">
+        <p style="font-size: 12px; font-weight: 700; color: #777; margin-bottom: 8px;">🔒 สำหรับวิทยากร / เจ้าหน้าที่:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <button class="btn btn--soft" style="padding: 6px 12px; font-size: 12px;" onclick="navigateTo('page-presenter')">
+            🎤 โหมดวิทยากร
+          </button>
+          <button class="btn btn--soft" style="padding: 6px 12px; font-size: 12px;" onclick="navigateTo('page-audience')">
+            📺 จอเรียนรู้สด
+          </button>
+          <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="navigateTo('page-admin')">
+            📋 ระบบเจ้าหน้าที่ & ส่งมอบงาน
+          </button>
+        </div>
       </div>
     </section>
 
