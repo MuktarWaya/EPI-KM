@@ -12,11 +12,14 @@
 
   <!-- App Navigation Header -->
   <header class="app-header">
-    <div class="brand-title">
+    <div class="brand-title" onclick="navigateTo('page-landing')" style="cursor: pointer;" title="กลับหน้าแรก">
       <div class="icon-tile">💉</div>
       <span>EPI รพ.สต.ประจัน</span>
     </div>
-    <div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button class="btn btn--soft" style="padding: 6px 14px; font-size: 14px;" onclick="navigateTo('page-landing')">
+        🏠 หน้าแรก
+      </button>
       <span class="chip" id="sessionChip">Session: DEFAULT</span>
     </div>
   </header>
@@ -151,7 +154,8 @@
         <button class="likert-btn" onclick="selectLikert(4)">4</button>
         <button class="likert-btn" onclick="selectLikert(5)">5</button>
       </div>
-      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+      <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 8px;">
+        <button class="btn" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
         <button class="btn" onclick="prevKsQuestion()">ย้อนกลับ</button>
         <button class="btn btn--primary" style="width: auto;" onclick="nextKsQuestion()">ข้อถัดไป</button>
       </div>
@@ -166,9 +170,12 @@
       <div id="learningContent">
         <!-- Rendered dynamically based on Routing Flags -->
       </div>
-      <button class="btn btn--primary" style="margin-top: 16px;" onclick="navigateTo('page-quiz-game')">
-        🎮 เข้าสู่เกมเรียนรู้อาการหลังฉีด
-      </button>
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button class="btn" style="flex:1;" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
+        <button class="btn btn--primary" style="flex:2;" onclick="navigateTo('page-quiz-game')">
+          🎮 เข้าสู่เกมเรียนรู้อาการหลังฉีด
+        </button>
+      </div>
     </section>
 
     <!-- PAGE 7: GREEN-YELLOW-RED QUIZ GAME -->
@@ -187,6 +194,7 @@
         <button class="btn" style="background: var(--green); color: #fff;" onclick="answerQuiz('GREEN')">🟢 สังเกตและดูแลที่บ้าน</button>
         <button class="btn" style="background: var(--yellow); color: var(--ink);" onclick="answerQuiz('YELLOW')">🟡 ติดต่อเจ้าหน้าที่ / มาประเมิน</button>
         <button class="btn btn--danger" onclick="answerQuiz('RED')">🔴 รีบพาไปโรงพยาบาลทันที</button>
+        <button class="btn" style="margin-top: 8px;" onclick="navigateTo('page-landing')">🏠 กลับหน้าแรก</button>
       </div>
     </section>
 
@@ -208,6 +216,7 @@
         <strong>Speaker Notes:</strong> กล่าวต้อนรับผู้ปกครอง ชี้แจงวัตถุประสงค์ และให้ทุกคนเข้าลิงก์เพื่อทำแบบสอบถามก่อนเริ่มสอน
       </div>
       <div style="display: flex; gap: 10px;">
+        <button class="btn" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
         <button class="btn" style="flex:1;" onclick="changeSlide(-1)">⬅️ สไลด์ก่อนหน้า</button>
         <button class="btn btn--primary" style="flex:1;" onclick="changeSlide(1)">สไลด์ถัดไป ➡️</button>
       </div>
@@ -225,6 +234,9 @@
           [ QR CODE ]
         </div>
         <p style="font-size: 20px; font-weight: 700;">ผู้เข้าร่วมขณะนี้: <span id="audCount" style="color: var(--green);">0</span> คน</p>
+      </div>
+      <div style="margin-top: 16px;">
+        <button class="btn" onclick="navigateTo('page-landing')">🏠 กลับหน้าแรก</button>
       </div>
     </section>
 
