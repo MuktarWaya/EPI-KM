@@ -114,7 +114,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">ชื่อ-นามสกุล เด็ก *</label>
-          <input type="text" class="form-control" id="childName" required placeholder="<ctrl42>เช่น ด.ช.อามีน">
+          <input type="text" class="form-control" id="childName" required placeholder="เช่น ด.ช.อามีน">
         </div>
         <div class="form-group">
           <label class="form-label">วันเดือนปีเกิดเด็ก *</label>
@@ -138,6 +138,29 @@
         </div>
         <button type="submit" class="btn btn--primary" style="margin-top: 12px;">บันทึกข้อมูลและถัดไป</button>
       </form>
+    </section>
+
+    <!-- PAGE 4: PRE-TEST QUESTIONNAIRE (10 ITEMS) -->
+    <section id="page-pretest" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">✍️</div>
+        <span>แบบประเมินความรู้ก่อนเรียน (Pre-test)</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" id="preTestProgressBar" style="width: 10%;"></div>
+      </div>
+      <p id="preTestQuestionNo" style="font-size: 14px; font-weight: 700; color: var(--blue); margin-bottom: 4px;">ข้อที่ 1 / 10</p>
+      <p id="preTestQuestionText" style="font-size: 18px; font-weight: 700; min-height: 54px; margin-bottom: 16px;">
+        1. การพาลูกมารับวัคซีนตามวัยมีประโยชน์สำคัญที่สุดอย่างไร?
+      </p>
+      <div id="preTestOptions" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Options rendered dynamically -->
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 8px;">
+        <button class="btn" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
+        <button class="btn" onclick="prevPreTestQuestion()">ย้อนกลับ</button>
+        <button class="btn btn--primary" style="width: auto;" onclick="nextPreTestQuestion()">ข้อถัดไป ➡️</button>
+      </div>
     </section>
 
     <!-- PAGE 5: KS MODEL LIKERT ASSESSMENT -->
@@ -165,7 +188,7 @@
       <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 8px;">
         <button class="btn" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
         <button class="btn" onclick="prevKsQuestion()">ย้อนกลับ</button>
-        <button class="btn btn--primary" style="width: auto;" onclick="nextKsQuestion()">ข้อถัดไป</button>
+        <button class="btn btn--primary" style="width: auto;" onclick="nextKsQuestion()">ข้อถัดไป ➡️</button>
       </div>
     </section>
 
@@ -202,7 +225,66 @@
         <button class="btn" style="background: var(--green); color: #fff;" onclick="answerQuiz('GREEN')">🟢 สังเกตและดูแลที่บ้าน</button>
         <button class="btn" style="background: var(--yellow); color: var(--ink);" onclick="answerQuiz('YELLOW')">🟡 ติดต่อเจ้าหน้าที่ / มาประเมิน</button>
         <button class="btn btn--danger" onclick="answerQuiz('RED')">🔴 รีบพาไปโรงพยาบาลทันที</button>
-        <button class="btn" style="margin-top: 8px;" onclick="navigateTo('page-landing')">🏠 กลับหน้าแรก</button>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button class="btn" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
+        <button class="btn btn--primary" style="flex:1;" onclick="startPostTest()">
+          ✍️ ทำแบบประเมินหลังเรียน (Post-test) ➡️
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 8: POST-TEST QUESTIONNAIRE (10 ITEMS) -->
+    <section id="page-posttest" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">🎯</div>
+        <span>แบบประเมินความรู้หลังเรียน (Post-test)</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" id="postTestProgressBar" style="width: 10%;"></div>
+      </div>
+      <p id="postTestQuestionNo" style="font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 4px;">ข้อที่ 1 / 10</p>
+      <p id="postTestQuestionText" style="font-size: 18px; font-weight: 700; min-height: 54px; margin-bottom: 16px;">
+        1. การพาลูกมารับวัคซีนตามวัยมีประโยชน์สำคัญที่สุดอย่างไร?
+      </p>
+      <div id="postTestOptions" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Options rendered dynamically -->
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 8px;">
+        <button class="btn" onclick="navigateTo('page-landing')">🏠 หน้าแรก</button>
+        <button class="btn" onclick="prevPostTestQuestion()">ย้อนกลับ</button>
+        <button class="btn btn--primary" style="width: auto;" onclick="nextPostTestQuestion()">ข้อถัดไป ➡️</button>
+      </div>
+    </section>
+
+    <!-- PAGE 9: EVALUATION & COMPARISON SUMMARY -->
+    <section id="page-summary" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">🏆</div>
+        <span>สรุปผลการเรียนรู้ของท่าน</span>
+      </div>
+      <div class="alert-card" style="background: var(--chip-green); border-color: var(--green);">
+        <h3 style="font-size: 20px; color: var(--green); margin-bottom: 6px;">ยินดีด้วย! ท่านผ่านการเรียนรู้เรียบร้อยแล้ว 🎉</h3>
+        <p>ผลการเรียนรู้และความเข้าใจของท่านได้รับการบันทึกเรียบร้อยแล้ว</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0;">
+        <div class="card" style="padding: 14px; text-align: center; background: #FFFDF0;">
+          <p style="font-size: 13px; font-weight: 700;">คะแนนก่อนเรียน (Pre-test)</p>
+          <h2 id="preScoreDisplay" style="font-size: 28px; color: var(--blue);">0 / 10</h2>
+        </div>
+        <div class="card" style="padding: 14px; text-align: center; background: #F0FFF4;">
+          <p style="font-size: 13px; font-weight: 700;">คะแนนหลังเรียน (Post-test)</p>
+          <h2 id="postScoreDisplay" style="font-size: 28px; color: var(--green);">0 / 10</h2>
+        </div>
+      </div>
+
+      <div class="alert-card" style="text-align: center; background: var(--note);">
+        <p style="font-size: 15px; font-weight: 700;">พัฒนาการของท่าน: <span id="scoreImprovement" style="color: var(--green); font-size: 20px;">+0 คะแนน</span> 📈</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+        <button class="btn btn--primary" onclick="navigateTo('page-landing')">🏠 กลับสู่หน้าแรก</button>
       </div>
     </section>
 
@@ -273,6 +355,108 @@
     let ksAnswers = {};
     let slideIndex = 1;
 
+    // 10 PRE-TEST & POST-TEST QUESTIONS (From pretest-posttest.txt)
+    const evaluationQuestions = [
+      {
+        q: "1. การพาลูกมารับวัคซีนตามวัยมีประโยชน์สำคัญที่สุดอย่างไร?",
+        options: [
+          { key: "ก", text: "ช่วยให้ลูกโตไวและเรียนเก่งกว่าเด็กคนอื่น" },
+          { key: "ข", text: "ช่วยสร้างภูมิคุ้มกันป้องกันโรคร้ายแรงและพิการในเด็ก" },
+          { key: "ค", text: "เพื่อไม่ให้โดนเจ้าหน้าที่ตักเตือน" }
+        ],
+        answer: "ข"
+      },
+      {
+        q: "2. หากเด็กมีสุขภาพแข็งแรงและกินนมได้ดี ยังจำเป็นต้องรับวัคซีนหรือไม่?",
+        options: [
+          { key: "ก", text: "จำเป็น เพราะเด็กทุกคนมีโอกาสสัมผัสเชื้อโรคร้ายแรงได้เท่ากัน" },
+          { key: "ข", text: "ไม่จำเป็น เพราะเด็กแข็งแรงมีภูมิคุ้มกันธรรมชาติครบถ้วนแล้ว" },
+          { key: "ค", text: "รับเฉพาะตอนที่เริ่มมีอาการป่วยเท่านั้น" }
+        ],
+        answer: "ก"
+      },
+      {
+        q: "3. หากพาลูกมารับวัคซีนล่าช้ากว่าวันนัด ควรทำอย่างไร?",
+        options: [
+          { key: "ก", text: "ต้องเริ่มต้นฉีดเข็มที่ 1 ใหม่ทั้งหมด" },
+          { key: "ข", text: "พาลูกมารับวัคซีนฉีดต่อได้ทันที โดยไม่ต้องเริ่มต้นใหม่" },
+          { key: "ค", text: "ไม่ต้องมาฉีดแล้วเพราะเลยกำหนดเวลา" }
+        ],
+        answer: "ข"
+      },
+      {
+        q: "4. วัคซีนเด็กที่ให้บริการใน รพ.สต. มีความปลอดภัยตามหลักศาสนาอิสลามหรือไม่?",
+        options: [
+          { key: "ก", text: "มีความปลอดภัย ผ่านการตรวจสอบของสำนักงานคณะกรรมการกลางอิสลามแห่งประเทศไทย" },
+          { key: "ข", text: "ไม่ปลอดภัยและเป็นข้อห้ามทางศาสนา" },
+          { key: "ค", text: "ไม่แน่ใจ ควรหลีกเลี่ยงไว้ก่อน" }
+        ],
+        answer: "ก"
+      },
+      {
+        q: "5. อาการใดต่อไปนี้ ถือเป็น 'อาการทั่วไปหลังฉีดวัคซีน' ที่สังเกตและดูแลที่บ้านได้?",
+        options: [
+          { key: "ก", text: "มีไข้ต่ำๆ (ไม่เกิน 38.5°C) ร้องงอแงเล็กน้อย ปวดแดงบริเวณที่ฉีด" },
+          { key: "ข", text: "ชักเกร็ง หายใจหอบเหนื่อย ปากเขียวช้ำ" },
+          { key: "ค", text: "ซึมมาก ปลุกไม่ตื่น ไม่ยอมกินนมเลยเกิน 1 วัน" }
+        ],
+        answer: "ก"
+      },
+      {
+        q: "6. หากลูกมีไข้ต่ำๆ หลังฉีดวัคซีน ผู้ปกครองควรปฐมพยาบาลเบื้องต้นอย่างไร?",
+        options: [
+          { key: "ก", text: "ห่มผ้าหนาๆ เพื่อให้เหงื่อออกมากๆ" },
+          { key: "ข", text: "เช็ดตัวด้วยน้ำอุณหภูมิห้อง ดื่มน้ำ/กินนมบ่อยๆ และทานยาลดไข้ตามคำแนะนำ" },
+          { key: "ค", text: "รีบซื้อยาปฏิชีวนะมาให้ลูกกินทันที" }
+        ],
+        answer: "ข"
+      },
+      {
+        q: "7. อาการใดเป็น 'อาการฉุกเฉิน' ที่ต้องรีบพาลูกไปโรงพยาบาลทันที?",
+        options: [
+          { key: "ก", text: "ร้องไห้งอแงหลังฉีดวัคซีน 1 ชั่วโมง" },
+          { key: "ข", text: "มีไข้สูง ปากเขียว ชักเกร็ง หรือซึมมากปลุกไม่ตื่น" },
+          { key: "ค", text: "มีรอยแดงเล็กน้อยตรงจุดที่ฉีด" }
+        ],
+        answer: "ข"
+      },
+      {
+        q: "8. การนำสมุดบันทึกสุขภาพแม่และเด็ก (สมุดชมพู) มารับบริการมีประโยชน์อย่างไร?",
+        options: [
+          { key: "ก", text: "เพื่อให้เจ้าหน้าที่ตรวจสอบและบันทึกประวัติวัคซีนได้ถูกต้องครบถ้วน" },
+          { key: "ข", text: "ใช้เป็นเอกสารยืนยันตัวตนแทนบัตรประชาชนเท่านั้น" },
+          { key: "ค", text: "ไม่มีประโยชน์ นำมาหรือไม่นำมาก็เหมือนกัน" }
+        ],
+        answer: "ก"
+      },
+      {
+        q: "9. หากผู้ปกครองติดภารกิจทำงาน หรือติดอุปสรรคการเดินทางในวันนัด ควรทำอย่างไร?",
+        options: [
+          { key: "ก", text: "ขาดนัดไปเลยโดยไม่ต้องแจ้งใคร" },
+          { key: "ข", text: "แจ้ง อสม. หรือเจ้าหน้าที่ รพ.สต. ล่วงหน้าเพื่อขอประสานงานปรับวันนัดหรือช่วยเหลือ" },
+          { key: "ค", text: "รอนัดใหม่ในอีก 1 ปีข้างหน้า" }
+        ],
+        answer: "ข"
+      },
+      {
+        q: "10. ความเชื่อเรื่องการฉีดวัคซีนข้อใดถูกต้องที่สุด?",
+        options: [
+          { key: "ก", text: "วัคซีนทำให้เด็กป่วยและอ่อนแอลง" },
+          { key: "ข", text: "การป้องกันโรคด้วยวัคซีนเป็นการดูแลสุขภาพตามหลักศาสนาและความรักของพ่อแม่" },
+          { key: "ค", text: "เด็กที่ฉีดวัคซีนแล้วจะไม่มีทางป่วยเป็นโรคใดๆ อีกเลยตลอดชีวิต" }
+        ],
+        answer: "ข"
+      }
+    ];
+
+    let preTestAnswers = {};
+    let currentPreIndex = 0;
+    let preTestTotalScore = 0;
+
+    let postTestAnswers = {};
+    let currentPostIndex = 0;
+    let postTestTotalScore = 0;
+
     const ksQuestions = [
       "1. ท่านเชื่อว่าวัคซีนมีความจำเป็นและช่วยป้องกันโรคร้ายแรงในเด็กได้จริง",
       "2. ท่านเชื่อมั่นในข้อมูลวัคซีนจากแพทย์ พยาบาล หรือเจ้าหน้าที่สาธารณสุข",
@@ -335,8 +519,7 @@
         if (result.success) {
           currentRecordId = result.data.RecordID;
           Swal.fire('สำเร็จ', 'ลงทะเบียนเรียบร้อยแล้ว', 'success').then(() => {
-            navigateTo('page-ksmodel');
-            loadKsQuestion(0);
+            startPreTest();
           });
         } else {
           Swal.fire('ผิดพลาด', result.message || 'ไม่สามารถบันทึกได้', 'error');
@@ -347,21 +530,110 @@
       }
     }
 
+    // PRE-TEST LOGIC
+    function startPreTest() {
+      currentPreIndex = 0;
+      preTestAnswers = {};
+      navigateTo('page-pretest');
+      loadPreTestQuestion(0);
+    }
+
+    function loadPreTestQuestion(idx) {
+      currentPreIndex = idx;
+      const item = evaluationQuestions[idx];
+      document.getElementById('preTestQuestionNo').innerText = `ข้อที่ ${idx + 1} / 10`;
+      document.getElementById('preTestQuestionText').innerText = item.q;
+      document.getElementById('preTestProgressBar').style.width = `${((idx + 1) / 10) * 100}%`;
+
+      const optionsBox = document.getElementById('preTestOptions');
+      optionsBox.innerHTML = '';
+
+      item.options.forEach(opt => {
+        const isSelected = preTestAnswers[idx] === opt.key;
+        const btn = document.createElement('button');
+        btn.className = `btn ${isSelected ? 'btn--active' : ''}`;
+        btn.style.textAlign = 'left';
+        btn.style.width = '100%';
+        btn.style.justifyContent = 'flex-start';
+        btn.innerHTML = `<strong>${opt.key}.</strong> ${opt.text}`;
+        btn.onclick = () => selectPreTestOption(idx, opt.key);
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function selectPreTestOption(idx, key) {
+      preTestAnswers[idx] = key;
+      loadPreTestQuestion(idx);
+    }
+
+    function nextPreTestQuestion() {
+      if (!preTestAnswers[currentPreIndex]) {
+        Swal.fire('คำเตือน', 'โปรดเลือกคำตอบก่อนไปยังข้อถัดไป', 'warning');
+        return;
+      }
+      if (currentPreIndex < 9) {
+        loadPreTestQuestion(currentPreIndex + 1);
+      } else {
+        submitPreTest();
+      }
+    }
+
+    function prevPreTestQuestion() {
+      if (currentPreIndex > 0) loadPreTestQuestion(currentPreIndex - 1);
+    }
+
+    async function submitPreTest() {
+      let score = 0;
+      const payloadAnswers = {};
+      evaluationQuestions.forEach((item, i) => {
+        const userAns = preTestAnswers[i];
+        payloadAnswers['q' + (i + 1)] = userAns;
+        if (userAns === item.answer) score++;
+      });
+      preTestTotalScore = score;
+
+      const payload = {
+        sessionId: currentSessionId,
+        recordId: currentRecordId,
+        totalScore: score,
+        ...payloadAnswers
+      };
+
+      Swal.fire({ title: 'กำลังบันทึกผล Pre-test...', didOpen: () => Swal.showLoading() });
+      try {
+        await fetch('/api/assessments/pretest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        Swal.close();
+        Swal.fire('ทำแบบประเมินก่อนเรียนสำเร็จ', 'ถัดไป: แบบสอบถามจำแนกความกังวล (KS Model)', 'success').then(() => {
+          navigateTo('page-ksmodel');
+          loadKsQuestion(0);
+        });
+      } catch (e) {
+        Swal.close();
+        navigateTo('page-ksmodel');
+        loadKsQuestion(0);
+      }
+    }
+
+    // KS MODEL LOGIC
     function loadKsQuestion(index) {
       currentKsIndex = index;
       document.getElementById('ksQuestionText').innerText = ksQuestions[index];
       document.getElementById('ksProgressBar').style.width = ((index + 1) / 8 * 100) + '%';
       
-      document.querySelectorAll('.likert-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('#page-ksmodel .likert-btn').forEach(btn => btn.classList.remove('selected'));
       if (ksAnswers['q' + (index + 1)]) {
         const val = ksAnswers['q' + (index + 1)];
-        document.querySelectorAll('.likert-btn')[val - 1].classList.add('selected');
+        document.querySelectorAll('#page-ksmodel .likert-btn')[val - 1].classList.add('selected');
       }
     }
 
     function selectLikert(val) {
       ksAnswers['q' + (currentKsIndex + 1)] = val;
-      document.querySelectorAll('.likert-btn').forEach((btn, idx) => {
+      document.querySelectorAll('#page-ksmodel .likert-btn').forEach((btn, idx) => {
         if (idx === val - 1) btn.classList.add('selected');
         else btn.classList.remove('selected');
       });
@@ -429,6 +701,93 @@
       } else {
         Swal.fire('ทบทวนอีกครั้ง', 'อาการไข้ต่ำร่าเริงกินนมได้ สามารถปฐมพยาบาลเบื้องต้นที่บ้านได้ครับ', 'info');
       }
+    }
+
+    // POST-TEST LOGIC
+    function startPostTest() {
+      currentPostIndex = 0;
+      postTestAnswers = {};
+      navigateTo('page-posttest');
+      loadPostTestQuestion(0);
+    }
+
+    function loadPostTestQuestion(idx) {
+      currentPostIndex = idx;
+      const item = evaluationQuestions[idx];
+      document.getElementById('postTestQuestionNo').innerText = `ข้อที่ ${idx + 1} / 10`;
+      document.getElementById('postTestQuestionText').innerText = item.q;
+      document.getElementById('postTestProgressBar').style.width = `${((idx + 1) / 10) * 100}%`;
+
+      const optionsBox = document.getElementById('postTestOptions');
+      optionsBox.innerHTML = '';
+
+      item.options.forEach(opt => {
+        const isSelected = postTestAnswers[idx] === opt.key;
+        const btn = document.createElement('button');
+        btn.className = `btn ${isSelected ? 'btn--active' : ''}`;
+        btn.style.textAlign = 'left';
+        btn.style.width = '100%';
+        btn.style.justifyContent = 'flex-start';
+        btn.innerHTML = `<strong>${opt.key}.</strong> ${opt.text}`;
+        btn.onclick = () => selectPostTestOption(idx, opt.key);
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function selectPostTestOption(idx, key) {
+      postTestAnswers[idx] = key;
+      loadPostTestQuestion(idx);
+    }
+
+    function nextPostTestQuestion() {
+      if (!postTestAnswers[currentPostIndex]) {
+        Swal.fire('คำเตือน', 'โปรดเลือกคำตอบก่อนไปยังข้อถัดไป', 'warning');
+        return;
+      }
+      if (currentPostIndex < 9) {
+        loadPostTestQuestion(currentPostIndex + 1);
+      } else {
+        submitPostTest();
+      }
+    }
+
+    function prevPostTestQuestion() {
+      if (currentPostIndex > 0) loadPostTestQuestion(currentPostIndex - 1);
+    }
+
+    async function submitPostTest() {
+      let score = 0;
+      const payloadAnswers = {};
+      evaluationQuestions.forEach((item, i) => {
+        const userAns = postTestAnswers[i];
+        payloadAnswers['q' + (i + 1)] = userAns;
+        if (userAns === item.answer) score++;
+      });
+      postTestTotalScore = score;
+
+      const payload = {
+        sessionId: currentSessionId,
+        recordId: currentRecordId,
+        totalScore: score,
+        confidenceScoreAfter: 5,
+        ...payloadAnswers
+      };
+
+      Swal.fire({ title: 'กำลังบันทึกผล Post-test...', didOpen: () => Swal.showLoading() });
+      try {
+        await fetch('/api/assessments/posttest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {}
+
+      Swal.close();
+      const diff = postTestTotalScore - preTestTotalScore;
+      document.getElementById('preScoreDisplay').innerText = `${preTestTotalScore} / 10`;
+      document.getElementById('postScoreDisplay').innerText = `${postTestTotalScore} / 10`;
+      document.getElementById('scoreImprovement').innerText = `${diff >= 0 ? '+' : ''}${diff} คะแนน`;
+      navigateTo('page-summary');
     }
 
     function changeSlide(dir) {

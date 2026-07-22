@@ -59,6 +59,12 @@ function handleApiRoute(action, data) {
     case 'REGISTER_PARTICIPANT':
       return registerParentAndChild(data);
 
+    case 'SUBMIT_PRETEST':
+      return savePreTest(data);
+
+    case 'SUBMIT_POSTTEST':
+      return savePostTest(data);
+
     case 'SUBMIT_KS_MODEL':
       return saveAcceptanceAssessment(data);
 

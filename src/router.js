@@ -40,6 +40,20 @@ export async function handleRequest(request, env) {
     return new Response(JSON.stringify(res), { headers: { 'Content-Type': 'application/json' } });
   }
 
+  // Submit PreTest Assessment
+  if (pathname === '/api/assessments/pretest' && method === 'POST') {
+    const body = await request.json();
+    const res = await callGasApi(env, 'SUBMIT_PRETEST', body);
+    return new Response(JSON.stringify(res), { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  // Submit PostTest Assessment
+  if (pathname === '/api/assessments/posttest' && method === 'POST') {
+    const body = await request.json();
+    const res = await callGasApi(env, 'SUBMIT_POSTTEST', body);
+    return new Response(JSON.stringify(res), { headers: { 'Content-Type': 'application/json' } });
+  }
+
   // Submit KS Model Likert Assessment
   if (pathname === '/api/assessments/ks' && method === 'POST') {
     const body = await request.json();

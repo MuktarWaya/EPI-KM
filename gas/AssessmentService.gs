@@ -1,5 +1,5 @@
 /**
- * AssessmentService.gs - Registration, KS Model Likert Assessment, Flag Routing & Parent Journey
+ * AssessmentService.gs - Registration, PreTest, KS Model Likert Assessment, PostTest & Flag Routing
  */
 
 function registerParentAndChild(data) {
@@ -35,6 +35,51 @@ function registerParentAndChild(data) {
     writeAuditLog({ UserID: 'PARENT', Role: 'PARENT', Action: 'REGISTER_CHILD', RecordID: recordId, Detail: 'Registered child ' + data.childName });
 
     return standardResponse(true, 'ลงทะเบียนสำเร็จ', record);
+  });
+}
+
+function savePreTest(data) {
+  return withLock(function() {
+    var responseId = generateId('PRE');
+    var now = new Date().toISOString();
+
+    var record = {
+      ResponseID: responseId,
+      SessionID: data.sessionId || 'DEFAULT',
+      RecordID: data.recordId,
+      SubmittedAt: now,
+      Q1: data.q1 || '', Q2: data.q2 || '', Q3: data.q3 || '', Q4: data.q4 || '', Q5: data.q5 || '',
+      Q6: data.q6 || '', Q7: data.q7 || '', Q8: data.q8 || '', Q9: data.q9 || '', Q10: data.q10 || '',
+      TotalScore: Number(data.totalScore || 0)
+    };
+
+    appendSheetRow('PreTest', record);
+    writeAuditLog({ UserID: 'PARENT', Role: 'PARENT', Action: 'SUBMIT_PRETEST', RecordID: data.recordId, Detail: 'Submitted PreTest score: ' + data.totalScore });
+
+    return standardResponse(true, 'บันทึกแบบประเมินก่อนเรียนสำเร็จ', record);
+  });
+}
+
+function savePostTest(data) {
+  return withLock(function() {
+    var responseId = generateId('PST');
+    var now = new Date().toISOString();
+
+    var record = {
+      ResponseID: responseId,
+      SessionID: data.sessionId || 'DEFAULT',
+      RecordID: data.recordId,
+      SubmittedAt: now,
+      Q1: data.q1 || '', Q2: data.q2 || '', Q3: data.q3 || '', Q4: data.q4 || '', Q5: data.q5 || '',
+      Q6: data.q6 || '', Q7: data.q7 || '', Q8: data.q8 || '', Q9: data.q9 || '', Q10: data.q10 || '',
+      TotalScore: Number(data.totalScore || 0),
+      ConfidenceScoreAfter: Number(data.confidenceScoreAfter || 5)
+    };
+
+    appendSheetRow('PostTest', record);
+    writeAuditLog({ UserID: 'PARENT', Role: 'PARENT', Action: 'SUBMIT_POSTTEST', RecordID: data.recordId, Detail: 'Submitted PostTest score: ' + data.totalScore });
+
+    return standardResponse(true, 'บันทึกแบบประเมินหลังเรียนสำเร็จ', record);
   });
 }
 
