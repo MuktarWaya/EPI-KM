@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คลินิกวัคซีนเด็ก 0-5 ปี (EPI-KM Platform)</title>
+  <link rel="stylesheet" href="/src/styles/neobrutalism.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- App Navigation Header -->
+  <header class="app-header">
+    <div class="brand-title">
+      <div class="icon-tile">💉</div>
+      <span>EPI รพ.สต.ประจัน</span>
+    </div>
+    <div>
+      <span class="chip" id="sessionChip">Session: DEFAULT</span>
+    </div>
+  </header>
+
+  <!-- Status Strip -->
+  <div class="status-strip">
+    <span>📢</span>
+    <span id="statusText">คลินิกเปิดบริการทุกวันพุธ 08:30 - 12:00 น. | ติดต่อ 073-xxx-xxx</span>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main id="app">
+
+    <!-- PAGE 1: LANDING PAGE -->
+    <section id="page-landing" class="card">
+      <div class="card-title">
+        <div class="icon-tile">👶</div>
+        <span>ยินดีต้อนรับสู่ คลินิกวัคซีนเด็ก 0-5 ปี</span>
+      </div>
+      <p style="margin-bottom: 16px;">
+        ตรวจสอบความรู้ คลายความกังวล และวางแผนพาลูกมารับวัคซีนอย่างมั่นใจ ร่วมสร้างภูมิคุ้มกันเพื่ออนาคตที่สดใสของลูกรัก
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <button class="btn btn--primary" onclick="navigateTo('page-consent')">
+          🚀 เริ่มต้นสำหรับผู้ปกครอง
+        </button>
+        <button class="btn btn--soft" onclick="navigateTo('page-presenter')">
+          🎤 โหมดวิทยากร (Presenter View)
+        </button>
+        <button class="btn btn--soft" onclick="navigateTo('page-audience')">
+          📺 จอแสดงผลเรียนรู้สด (Audience Screen)
+        </button>
+        <button class="btn" onclick="navigateTo('page-admin')">
+          📋 ระบบเจ้าหน้าที่ & สรุปส่งมอบงาน
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 2: PRIVACY & CONSENT -->
+    <section id="page-consent" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">🔒</div>
+        <span>การคุ้มครองข้อมูลส่วนบุคคล & ความยินยอม</span>
+      </div>
+      <p style="margin-bottom: 12px; font-size: 14px;">
+        ระบบจะจัดเก็บข้อมูลเท่าที่จำเป็นเพื่อใช้ในการประเมินและติดตามการรับวัคซีนของเด็ก โดยข้อมูลจะถูกเก็บเป็นความลับและเข้าถึงได้เฉพาะเจ้าหน้าที่สาธารณสุขและ อสม. ผู้รับผิดชอบเท่านั้น
+      </p>
+      <div class="form-group" style="margin-top: 16px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700;">
+          <input type="checkbox" id="chkConsent" style="width: 20px; height: 20px;">
+          <span>ข้าพเจ้ายินยอมให้จัดเก็บและใช้ข้อมูลเพื่อการดูแลสุขภาพเด็ก</span>
+        </label>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn" style="flex:1;" onclick="navigateTo('page-landing')">ย้อนกลับ</button>
+        <button class="btn btn--primary" style="flex:2;" onclick="proceedFromConsent()">ยินยอมและดำเนินการต่อ</button>
+      </div>
+    </section>
+
+    <!-- PAGE 3: REGISTRATION -->
+    <section id="page-register" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">📝</div>
+        <span>ลงทะเบียนผู้ปกครองและเด็ก</span>
+      </div>
+      <form id="regForm" onsubmit="handleRegistration(event)">
+        <div class="form-group">
+          <label class="form-label">ชื่อ-นามสกุล ผู้ปกครอง *</label>
+          <input type="text" class="form-control" id="parentName" required placeholder="เช่น นางสาวมารียัม มายอ">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ความสัมพันธ์กับเด็ก</label>
+          <select class="form-control" id="relationship">
+            <option value="มารดา">มารดา</option>
+            <option value="บิดา">บิดา</option>
+            <option value="ปู่/ย่า/ตา/ยาย">ปู่/ย่า/ตา/ยาย</option>
+            <option value="ผู้ดูแล">ผู้ดูแล</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">เบอร์โทรศัพท์ติดต่อ *</label>
+          <input type="tel" class="form-control" id="phone" required placeholder="เช่น 0812345678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ชื่อ-นามสกุล เด็ก *</label>
+          <input type="text" class="form-control" id="childName" required placeholder="<ctrl42>เช่น ด.ช.อามีน">
+        </div>
+        <div class="form-group">
+          <label class="form-label">วันเดือนปีเกิดเด็ก *</label>
+          <input type="date" class="form-control" id="birthDate" required onchange="calculateAge()">
+          <span id="ageDisplay" style="font-size: 13px; font-weight: 700; color: var(--green); display: block; margin-top: 4px;"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมู่บ้าน *</label>
+          <select class="form-control" id="village" required>
+            <option value="">-- เลือกหมู่บ้าน --</option>
+            <option value="หมู่ที่ 1 บ้านประจัน">หมู่ที่ 1 บ้านประจัน</option>
+            <option value="หมู่ที่ 2 บ้านประจันตะวันตก">หมู่ที่ 2 บ้านประจันตะวันตก</option>
+            <option value="หมู่ที่ 3 บ้านควน">หมู่ที่ 3 บ้านควน</option>
+            <option value="หมู่ที่ 4 บ้านเกาะ">หมู่ที่ 4 บ้านเกาะ</option>
+            <option value="หมู่ที่ 5 บ้านกาแป๊ะ">หมู่ที่ 5 บ้านกาแป๊ะ</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn--primary" style="margin-top: 12px;">บันทึกข้อมูลและถัดไป</button>
+      </form>
+    </section>
+
+    <!-- PAGE 5: KS MODEL LIKERT ASSESSMENT -->
+    <section id="page-ksmodel" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">📊</div>
+        <span>แบบสอบถามจำแนกการยอมรับวัคซีน (KS Model)</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" id="ksProgressBar" style="width: 12.5%;"></div>
+      </div>
+      <p id="ksQuestionText" style="font-size: 18px; font-weight: 700; min-height: 60px; margin-bottom: 16px;">
+        1. ท่านเชื่อว่าวัคซีนมีความจำเป็นและช่วยป้องกันโรคร้ายแรงในเด็กได้จริง
+      </p>
+      <p style="font-size: 13px; color: #555; margin-bottom: 8px;">
+        เลือกระดับความรู้สึก (1 = ไม่เห็นด้วยอย่างยิ่ง | 5 = เห็นด้วยอย่างยิ่ง)
+      </p>
+      <div class="likert-group">
+        <button class="likert-btn" onclick="selectLikert(1)">1</button>
+        <button class="likert-btn" onclick="selectLikert(2)">2</button>
+        <button class="likert-btn" onclick="selectLikert(3)">3</button>
+        <button class="likert-btn" onclick="selectLikert(4)">4</button>
+        <button class="likert-btn" onclick="selectLikert(5)">5</button>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button class="btn" onclick="prevKsQuestion()">ย้อนกลับ</button>
+        <button class="btn btn--primary" style="width: auto;" onclick="nextKsQuestion()">ข้อถัดไป</button>
+      </div>
+    </section>
+
+    <!-- PAGE 6: PERSONALIZED LEARNING PATH -->
+    <section id="page-learning" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">📚</div>
+        <span>บทเรียนเฉพาะสำหรับท่าน</span>
+      </div>
+      <div id="learningContent">
+        <!-- Rendered dynamically based on Routing Flags -->
+      </div>
+      <button class="btn btn--primary" style="margin-top: 16px;" onclick="navigateTo('page-quiz-game')">
+        🎮 เข้าสู่เกมเรียนรู้อาการหลังฉีด
+      </button>
+    </section>
+
+    <!-- PAGE 7: GREEN-YELLOW-RED QUIZ GAME -->
+    <section id="page-quiz-game" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">🚦</div>
+        <span>เกมประเมินอาการหลังฉีด (เขียว - เหลือง - แดง)</span>
+      </div>
+      <div class="alert-card">
+        <strong>คำชี้แจง:</strong> เลือกสีตามระดับความรุนแรงของอาการ (🟢 สังเกตที่บ้าน | 🟡 ติดต่อประเมิน | 🔴 ฉุกเฉินไป รพ.)
+      </div>
+      <p id="quizScenario" style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">
+        เด็กมีไข้ต่ำๆ 37.8°C หลังฉีดวัคซีน 4 ชั่วโมง แต่ร่าเริง กินนมได้ปกติ
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn" style="background: var(--green); color: #fff;" onclick="answerQuiz('GREEN')">🟢 สังเกตและดูแลที่บ้าน</button>
+        <button class="btn" style="background: var(--yellow); color: var(--ink);" onclick="answerQuiz('YELLOW')">🟡 ติดต่อเจ้าหน้าที่ / มาประเมิน</button>
+        <button class="btn btn--danger" onclick="answerQuiz('RED')">🔴 รีบพาไปโรงพยาบาลทันที</button>
+      </div>
+    </section>
+
+    <!-- PRESENTER VIEW (LIVE TEACHING MODE) -->
+    <section id="page-presenter" class="card presenter-body" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">🎙️</div>
+        <span>Presenter Control View (สำหรับวิทยากร)</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span class="chip">สไลด์ที่ <span id="currentSlideNum">1</span> / 50</span>
+        <span class="chip" style="background: var(--note);">ผู้ตอบสด: <span id="liveParticipantCount">0</span> คน</span>
+      </div>
+      <div class="slide-container" id="presenterSlideBox">
+        <h2>สไลด์ที่ 1: ต้อนรับสู่การอบรมวัคซีน EPI</h2>
+        <p style="margin-top: 12px;">ให้ผู้ปกครองสแกน QR Code เพื่อเข้าร่วมและตอบแบบสอบถามสด</p>
+      </div>
+      <div class="alert-card">
+        <strong>Speaker Notes:</strong> กล่าวต้อนรับผู้ปกครอง ชี้แจงวัตถุประสงค์ และให้ทุกคนเข้าลิงก์เพื่อทำแบบสอบถามก่อนเริ่มสอน
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" style="flex:1;" onclick="changeSlide(-1)">⬅️ สไลด์ก่อนหน้า</button>
+        <button class="btn btn--primary" style="flex:1;" onclick="changeSlide(1)">สไลด์ถัดไป ➡️</button>
+      </div>
+    </section>
+
+    <!-- AUDIENCE DISPLAY SCREEN -->
+    <section id="page-audience" class="card presenter-body" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">📺</div>
+        <span>Audience Display Screen (จอเรียนรู้สด)</span>
+      </div>
+      <div class="slide-container" style="text-align: center;">
+        <h1 style="font-size: 28px; margin-bottom: 16px;">สแกนเพื่อเข้าร่วมกิจกรรมสด</h1>
+        <div style="width: 180px; height: 180px; background: var(--yellow); border: var(--border-thick); margin: 0 auto 16px auto; display: grid; place-items: center; font-weight: 800; border-radius: 16px;">
+          [ QR CODE ]
+        </div>
+        <p style="font-size: 20px; font-weight: 700;">ผู้เข้าร่วมขณะนี้: <span id="audCount" style="color: var(--green);">0</span> คน</p>
+      </div>
+    </section>
+
+    <!-- STAFF REVIEW & HANDOVER DASHBOARD -->
+    <section id="page-admin" class="card" style="display: none;">
+      <div class="card-title">
+        <div class="icon-tile">📊</div>
+        <span>Staff Dashboard & สรุปส่งมอบงาน</span>
+      </div>
+      <div class="alert-card">
+        <strong>หน่วยบริการ:</strong> รพ.สต.ประจัน | <strong>Session:</strong> DEFAULT
+      </div>
+      <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn--primary" onclick="exportHandoverSummary()">📑 สร้างรายงานส่งมอบ (PDF/Summary)</button>
+        <button class="btn btn--soft" onclick="exportFollowUpCsv()">📥 Export CSV รายชื่อติดตาม</button>
+      </div>
+      <button class="btn" onclick="navigateTo('page-landing')">กลับหน้าหลัก</button>
+    </section>
+
+  </main>
+
+  <script>
+    let currentRecordId = null;
+    let currentSessionId = 'SES-PROCHAN-001';
+    let currentKsIndex = 0;
+    let ksAnswers = {};
+    let slideIndex = 1;
+
+    const ksQuestions = [
+      "1. ท่านเชื่อว่าวัคซีนมีความจำเป็นและช่วยป้องกันโรคร้ายแรงในเด็กได้จริง",
+      "2. ท่านเชื่อมั่นในข้อมูลวัคซีนจากแพทย์ พยาบาล หรือเจ้าหน้าที่สาธารณสุข",
+      "3. ผู้นำศาสนาหรือผู้นำชุมชนของท่านส่งเสริมให้เด็กฉีดวัคซีน",
+      "4. ท่านยินดีพาลูกไปฉีดวัคซีนตามนัดทุกครั้งหากไม่มีเหตุจำเป็นจริงๆ",
+      "5. ท่านกังวลเรื่องผลข้างเคียงหรือสารเจือปนในวัคซีน (เช่น ฮาลาล หรือความปลอดภัย)",
+      "6. ท่านเชื่อว่าการเจ็บป่วยเป็นเรื่องของโชคชะตา/พระประสงค์ ไม่จำเป็นต้องรับวัคซีน",
+      "7. ท่านมีอุปสรรคในการเดินทางหรือเวลาทำงาน ทำให้ไม่สะดวกพาลูกไปรับวัคซีน",
+      "8. คนรอบข้างหรือโซเชียลมีเดียทำให้ท่านลังเลที่จะให้ลูกฉีดวัคซีน"
+    ];
+
+    function navigateTo(pageId) {
+      document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(pageId).style.display = 'block';
+    }
+
+    function proceedFromConsent() {
+      if (!document.getElementById('chkConsent').checked) {
+        Swal.fire('ข้อความแจ้งเตือน', 'โปรดทำเครื่องหมายยินยอมเปิดเผยข้อมูลเพื่อดำเนินการต่อ', 'warning');
+        return;
+      }
+      navigateTo('page-register');
+    }
+
+    function calculateAge() {
+      const birth = new Date(document.getElementById('birthDate').value);
+      if (isNaN(birth.getTime())) return;
+      const today = new Date();
+      let months = (today.getFullYear() - birth.getFullYear()) * 12;
+      months -= birth.getMonth();
+      months += today.getMonth();
+      const yrs = Math.floor(months / 12);
+      const mths = months % 12;
+      document.getElementById('ageDisplay').innerText = `อายุคำนวณ: ${yrs} ปี ${mths} เดือน (${months} เดือน)`;
+    }
+
+    async function handleRegistration(e) {
+      e.preventDefault();
+      const payload = {
+        sessionId: currentSessionId,
+        parentName: document.getElementById('parentName').value,
+        relationship: document.getElementById('relationship').value,
+        phone: document.getElementById('phone').value,
+        childName: document.getElementById('childName').value,
+        birthDate: document.getElementById('birthDate').value,
+        village: document.getElementById('village').value,
+        consent: true,
+        hasVaccineBook: true
+      };
+
+      Swal.fire({ title: 'กำลังบันทึกข้อมูล...', didOpen: () => Swal.showLoading() });
+      try {
+        const res = await fetch('/api/participants/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        Swal.close();
+        if (result.success) {
+          currentRecordId = result.data.RecordID;
+          Swal.fire('สำเร็จ', 'ลงทะเบียนเรียบร้อยแล้ว', 'success').then(() => {
+            navigateTo('page-ksmodel');
+            loadKsQuestion(0);
+          });
+        } else {
+          Swal.fire('ผิดพลาด', result.message || 'ไม่สามารถบันทึกได้', 'error');
+        }
+      } catch (err) {
+        Swal.close();
+        Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อ Server ได้', 'error');
+      }
+    }
+
+    function loadKsQuestion(index) {
+      currentKsIndex = index;
+      document.getElementById('ksQuestionText').innerText = ksQuestions[index];
+      document.getElementById('ksProgressBar').style.width = ((index + 1) / 8 * 100) + '%';
+      
+      document.querySelectorAll('.likert-btn').forEach(btn => btn.classList.remove('selected'));
+      if (ksAnswers['q' + (index + 1)]) {
+        const val = ksAnswers['q' + (index + 1)];
+        document.querySelectorAll('.likert-btn')[val - 1].classList.add('selected');
+      }
+    }
+
+    function selectLikert(val) {
+      ksAnswers['q' + (currentKsIndex + 1)] = val;
+      document.querySelectorAll('.likert-btn').forEach((btn, idx) => {
+        if (idx === val - 1) btn.classList.add('selected');
+        else btn.classList.remove('selected');
+      });
+    }
+
+    function nextKsQuestion() {
+      if (!ksAnswers['q' + (currentKsIndex + 1)]) {
+        Swal.fire('คำเตือน', 'โปรดเลือกระดับความรู้สึกก่อนไปยังข้อถัดไป', 'warning');
+        return;
+      }
+      if (currentKsIndex < 7) {
+        loadKsQuestion(currentKsIndex + 1);
+      } else {
+        submitKsAssessment();
+      }
+    }
+
+    function prevKsQuestion() {
+      if (currentKsIndex > 0) loadKsQuestion(currentKsIndex - 1);
+    }
+
+    async function submitKsAssessment() {
+      const payload = {
+        sessionId: currentSessionId,
+        recordId: currentRecordId,
+        ...ksAnswers
+      };
+      Swal.fire({ title: 'กำลังประเมินคำตอบ...', didOpen: () => Swal.showLoading() });
+      try {
+        const res = await fetch('/api/assessments/ks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        Swal.close();
+        if (result.success) {
+          renderPersonalizedLearning(result.data.personalizedFlags);
+          navigateTo('page-learning');
+        } else {
+          Swal.fire('ผิดพลาด', result.message, 'error');
+        }
+      } catch (e) {
+        Swal.close();
+        Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการประมวลผล', 'error');
+      }
+    }
+
+    function renderPersonalizedLearning(flags) {
+      let html = '<div class="alert-card"><strong>จากคำตอบของท่าน:</strong> เราจัดเตรียมข้อมูลสำคัญที่เหมาะกับท่านเรียบร้อยแล้ว</div>';
+      html += '<div class="card" style="margin-top: 10px;"><h4>1. วัคซีนช่วยลูกอย่างไร</h4><p>ช่วยสร้างภูมิคุ้มกันโรคอันตราย เช่น ไอกรน หัด ปอดอักเสบ</p></div>';
+      
+      if (flags.safety) {
+        html += '<div class="card" style="border-color: var(--red);"><h4>⚠️ ข้อมูลความปลอดภัยและผลข้างเคียง</h4><p>อาการไข้ต่ำปวดบริเวณที่ฉีดเป็นปฏิกิริยาปกติของร่างกาย สามารถประคบเย็นและทานยาลดไข้ตามคำแนะนำได้</p></div>';
+      }
+      if (flags.access) {
+        html += '<div class="card" style="border-color: var(--blue);"><h4>🚗 อุปสรรคเวลาและการเดินทาง</h4><p>รพ.สต.ประจัน มีบริการจัดนัดยืดหยุ่นหรือสามารถแจ้ง อสม. เพื่อประสานการเดินทางได้</p></div>';
+      }
+      document.getElementById('learningContent').innerHTML = html;
+    }
+
+    function answerQuiz(color) {
+      if (color === 'GREEN') {
+        Swal.fire('ถูกต้อง! 🎉', 'ไข้ต่ำกินนมได้ปกติ เป็นอาการทั่วไปที่ดูแลและประคบเย็นที่บ้านได้', 'success');
+      } else {
+        Swal.fire('ทบทวนอีกครั้ง', 'อาการไข้ต่ำร่าเริงกินนมได้ สามารถปฐมพยาบาลเบื้องต้นที่บ้านได้ครับ', 'info');
+      }
+    }
+
+    function changeSlide(dir) {
+      slideIndex = Math.max(1, Math.min(50, slideIndex + dir));
+      document.getElementById('currentSlideNum').innerText = slideIndex;
+      document.getElementById('presenterSlideBox').innerHTML = `<h2>สไลด์ที่ ${slideIndex}: หัวข้อบทเรียน EPI</h2><p>เนื้อหาบทเรียนย่อยตามสไลด์ที่ ${slideIndex}</p>`;
+    }
+
+    async function exportHandoverSummary() {
+      const res = await fetch(`/api/export/${currentSessionId}/summary`);
+      const data = await res.json();
+      if (data.success) {
+        Swal.fire('รายงานส่งมอบสำเร็จ', `จำนวนเด็ก: ${data.data.totalChildren} | รายการต้องติดตาม: ${data.data.openFlagsCount}`, 'success');
+      }
+    }
+
+    function exportFollowUpCsv() {
+      window.location.href = `/api/export/${currentSessionId}/followup.csv`;
+    }
+  </script>
+</body>
+</html>
