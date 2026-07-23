@@ -63,15 +63,15 @@ function getSheetSchemas() {
     ],
     'Children': [
       'RecordID', 'SessionID', 'CreatedAt', 'ParentName', 'Relationship', 'Phone', 'LineID', 'ChildName',
-      'BirthDate', 'AgeMonths', 'Gender', 'Village', 'VolunteerName', 'HasVaccineBook', 'Consent',
-      'VaccineStatus', 'MissingVaccine', 'StaffNote', 'LastUpdated'
+      'BirthDate', 'AgeMonths', 'Gender', 'HouseNo', 'Village', 'Subdistrict', 'District', 'InfluencerPerson',
+      'VolunteerName', 'HasVaccineBook', 'Consent', 'VaccineStatus', 'MissingVaccine', 'StaffNote', 'LastUpdated'
     ],
     'PreTest': ['ResponseID', 'SessionID', 'RecordID', 'SubmittedAt', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'TotalScore'],
     'AcceptanceAssessment': [
       'AssessmentID', 'SessionID', 'RecordID', 'SubmittedAt', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8',
-      'Suggestion', 'FlagSafetyConcern', 'FlagReligiousBelief', 'FlagAccessBarrier', 'FlagSocialMedia',
-      'FlagLowAppointmentIntention', 'FlagLowConfidence', 'ClassificationStatus', 'ClassificationResult',
-      'ScoringVersion', 'ReviewedBy', 'ReviewedAt', 'ReviewNote', 'LastUpdated'
+      'TotalKsScore', 'KsCategoryCode', 'KsCategoryName', 'Suggestion', 'FlagSafetyConcern', 'FlagReligiousBelief',
+      'FlagAccessBarrier', 'FlagSocialMedia', 'FlagLowAppointmentIntention', 'FlagLowConfidence',
+      'ClassificationStatus', 'ClassificationResult', 'ScoringVersion', 'ReviewedBy', 'ReviewedAt', 'ReviewNote', 'LastUpdated'
     ],
     'AssessmentFlags': [
       'FlagID', 'SessionID', 'AssessmentID', 'RecordID', 'FlagType', 'FlagLabel', 'FlagStatus',
@@ -129,7 +129,7 @@ function getSheetData(sheetName) {
 }
 
 /**
- * Helper to append object to sheet
+ * Helper to append object to sheet with automatic missing column expansion
  */
 function appendSheetRow(sheetName, dataObject) {
   var ss = getDb();
@@ -140,6 +140,20 @@ function appendSheetRow(sheetName, dataObject) {
   }
 
   var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var missingCols = [];
+  for (var key in dataObject) {
+    if (headers.indexOf(key) === -1) {
+      missingCols.push(key);
+    }
+  }
+
+  if (missingCols.length > 0) {
+    var startCol = headers.length + 1;
+    sheet.getRange(1, startCol, 1, missingCols.length).setValues([missingCols]);
+    sheet.getRange(1, startCol, 1, missingCols.length).setFontWeight('bold').setBackground('#F6EFDC');
+    headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  }
+
   var rowValues = headers.map(function(h) {
     var val = dataObject[h];
     if (val === undefined || val === null) return '';
