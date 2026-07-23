@@ -43,10 +43,13 @@
         ตรวจสอบความรู้ คลายความกังวล และวางแผนพาลูกมารับวัคซีนอย่างมั่นใจ ร่วมสร้างภูมิคุ้มกันเพื่ออนาคตที่สดใสของลูกรัก
       </p>
       
-      <!-- MAIN PARENT ACTION BUTTON (PROMINENT) -->
-      <div style="margin-bottom: 24px;">
-        <button class="btn btn--primary" style="padding: 16px 24px; font-size: 20px; box-shadow: var(--shadow-md); width: 100%;" onclick="navigateTo('page-consent')">
-          🚀 เริ่มต้นสำหรับผู้ปกครอง (ก่อนฟังบรรยาย)
+      <!-- MAIN PARENT ACTION BUTTONS -->
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <button class="btn btn--primary" style="padding: 16px 24px; font-size: 18px; box-shadow: var(--shadow-md); width: 100%;" onclick="navigateTo('page-consent')">
+          🚀 1. ลงทะเบียน & ทำแบบประเมิน KS Model (ก่อนฟังบรรยาย)
+        </button>
+        <button class="btn btn--soft" style="padding: 14px 20px; font-size: 16px; border: 2px solid var(--blue); color: var(--blue); width: 100%;" onclick="startPreTest()">
+          ✍️ 2. แบบทดสอบความรู้ก่อนเรียน (Pre-test)
         </button>
       </div>
 
@@ -405,6 +408,21 @@
         <p style="font-size: 16px; line-height: 1.6; margin-bottom: 8px;">
           ท่านได้ลงทะเบียนและทำแบบประเมินความรู้เบื้องต้นเรียบร้อยแล้ว
         </p>
+
+        <!-- DYNAMIC USER KS MODEL RESULT CARD -->
+        <div id="userKsResultCard" class="card" style="display: none; background: #FFFFFF; border: 2px solid #68D391; margin: 16px 0; text-align: left; padding: 16px; box-shadow: var(--shadow-sm);">
+          <h4 style="font-size: 15px; font-weight: 700; color: #2D3748; margin-bottom: 8px;">
+            📊 ผลการประเมินความพร้อมรับวัคซีนของท่าน (KS Model)
+          </h4>
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+            <span style="font-size: 14px; font-weight: 700; color: #2D3748;">คะแนนความพร้อมรวม: <span id="userKsScoreDisplay" style="font-size: 18px; color: var(--blue);">0 / +15</span></span>
+            <span id="userKsCategoryBadge" class="chip" style="font-size: 13px; padding: 6px 12px; font-weight: 700;">-</span>
+          </div>
+          <p id="userKsDescription" style="font-size: 13px; color: #4A5568; margin: 0; line-height: 1.5;">
+            -
+          </p>
+        </div>
+
         <p style="font-size: 18px; font-weight: 700; color: var(--blue);">
           📢 โปรดรอฟังการบรรยายและร่วมกิจกรรมจากวิทยากร
         </p>
@@ -532,7 +550,7 @@
         </div>
 
         <!-- KPI SUMMARY FOR KS MODEL -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
           <div class="card" style="padding: 14px; text-align: center; background: #EDF2F7; margin: 0;">
             <p style="font-size: 12px; font-weight: 700; color: #4A5568;">จำนวนผู้ตอบ KS Model</p>
             <h2 id="kpiRespondents" style="font-size: 26px; color: #2B6CB0; margin-top: 4px;">0 คน</h2>
@@ -540,6 +558,31 @@
           <div class="card" style="padding: 14px; text-align: center; background: #F0FFF4; margin: 0;">
             <p style="font-size: 12px; font-weight: 700; color: var(--green);">คะแนนเฉลี่ยรวม KS Model</p>
             <h2 id="kpiKsAvg" style="font-size: 26px; color: var(--green); margin-top: 4px;">0.00 / 5.00</h2>
+          </div>
+        </div>
+
+        <!-- 4-TIER CLASSIFICATION BREAKDOWN CARDS -->
+        <div style="margin-bottom: 20px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: #2D3748; margin-bottom: 10px;">
+            🏷️ การจำแนกสัดส่วนกลุ่มความพร้อมรับวัคซีน (4 กลุ่ม)
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px;">
+            <div class="card" style="padding: 12px; border-left: 4px solid #38A169; background: #F0FFF4; margin: 0;">
+              <p style="font-size: 11px; font-weight: 700; color: #22543D;">1. พร้อมรับบริการ (≥ +7)</p>
+              <h3 id="ksGroup1Count" style="font-size: 18px; color: #276749; margin-top: 4px;">0 คน (0%)</h3>
+            </div>
+            <div class="card" style="padding: 12px; border-left: 4px solid #3182CE; background: #EBF8FF; margin: 0;">
+              <p style="font-size: 11px; font-weight: 700; color: #2B6CB0;">2. เปิดรับและพร้อมฉีด (0 ถึง +6)</p>
+              <h3 id="ksGroup2Count" style="font-size: 18px; color: #2B6CB0; margin-top: 4px;">0 คน (0%)</h3>
+            </div>
+            <div class="card" style="padding: 12px; border-left: 4px solid #DD6B20; background: #FEFCBF; margin: 0;">
+              <p style="font-size: 11px; font-weight: 700; color: #744210;">3. มีข้อกังวลชะลอ (-1 ถึง -7)</p>
+              <h3 id="ksGroup3Count" style="font-size: 18px; color: #744210; margin-top: 4px;">0 คน (0%)</h3>
+            </div>
+            <div class="card" style="padding: 12px; border-left: 4px solid #E53E3E; background: #FED7D7; margin: 0;">
+              <p style="font-size: 11px; font-weight: 700; color: #742A2A;">4. ต้องการดูแลพิเศษ (≤ -8)</p>
+              <h3 id="ksGroup4Count" style="font-size: 18px; color: #9B2C2C; margin-top: 4px;">0 คน (0%)</h3>
+            </div>
           </div>
         </div>
 
@@ -809,8 +852,9 @@
         Swal.close();
         if (result.success) {
           currentRecordId = result.data.RecordID;
-          Swal.fire('สำเร็จ', 'ลงทะเบียนเรียบร้อยแล้ว', 'success').then(() => {
-            startPreTest();
+          Swal.fire('สำเร็จ', 'ลงทะเบียนเรียบร้อยแล้ว เข้าสู่แบบประเมิน KS Model', 'success').then(() => {
+            navigateTo('page-ksmodel');
+            loadKsQuestion(0);
           });
         } else {
           Swal.fire('ผิดพลาด', result.message || 'ไม่สามารถบันทึกได้', 'error');
@@ -898,14 +942,12 @@
           body: JSON.stringify(payload)
         });
         Swal.close();
-        Swal.fire('ทำแบบประเมินก่อนเรียนสำเร็จ', 'ถัดไป: แบบสอบถามจำแนกความกังวล (KS Model)', 'success').then(() => {
-          navigateTo('page-ksmodel');
-          loadKsQuestion(0);
+        Swal.fire('ทำแบบทดสอบความรู้ก่อนเรียนสำเร็จ', 'บันทึกคะแนน Pre-test เรียบร้อยแล้ว', 'success').then(() => {
+          navigateTo('page-landing');
         });
       } catch (e) {
         Swal.close();
-        navigateTo('page-ksmodel');
-        loadKsQuestion(0);
+        navigateTo('page-landing');
       }
     }
 
@@ -946,32 +988,95 @@
       if (currentKsIndex > 0) loadKsQuestion(currentKsIndex - 1);
     }
 
+    function calculateKsScoreAndGroup(q1, q2, q3, q4, q5, q6, q7, q8) {
+      const scorePos = (q1 - 3) + (q2 - 3) + (q3 - 3) + (q4 - 3);
+      const scoreNeg = (3 - q5) + (3 - q6) + (3 - q7) + (3 - q8);
+      const rawScore = scorePos + scoreNeg;
+      const totalScore = Math.max(-15, Math.min(15, rawScore));
+
+      let code = '';
+      let name = '';
+      let desc = '';
+      let badgeStyle = '';
+      let groupNum = 1;
+
+      if (totalScore >= 7) {
+        groupNum = 1;
+        code = 'ACCEPTANT';
+        name = 'กลุ่มพร้อมรับบริการวัคซีน (ยอมรับและยินดีรับบริการ)';
+        badgeStyle = 'background:#C6F6D5; color:#22543D; border: 1px solid #9AE6B4;';
+        desc = 'ท่านมีความพร้อมและความเชื่อมั่นสูงในการพาบุตรหลานมารับบริการวัคซีนตามกำหนด';
+      } else if (totalScore >= 0) {
+        groupNum = 2;
+        code = 'HESITANT_ACCEPT';
+        name = 'กลุ่มเปิดรับและพร้อมรับวัคซีน (มีความลังเลเล็กน้อย/ยินดีฉีด)';
+        badgeStyle = 'background:#EBF8FF; color:#2B6CB0; border: 1px solid #BEE3F8;';
+        desc = 'ท่านมีความตั้งใจดีในการดูแลบุตรหลาน และพร้อมรับฟังข้อมูลเพิ่มเติมเพื่อความสบายใจในการรับบริการ';
+      } else if (totalScore >= -7) {
+        groupNum = 3;
+        code = 'HESITANT_DELAY';
+        name = 'กลุ่มมีข้อกังวลชะลอการรับวัคซีน (ต้องการคำแนะนำเพิ่มเติม)';
+        badgeStyle = 'background:#FEFCBF; color:#744210; border: 1px solid #F6E05E;';
+        desc = 'ท่านอาจยังมีข้อสงสัยหรือข้อกังวลบางประการ วิทยากรและเจ้าหน้าที่พร้อมให้คำแนะนำและดูแลอย่างใกล้ชิด';
+      } else {
+        groupNum = 4;
+        code = 'SPECIAL_CARE';
+        name = 'กลุ่มต้องการการดูแลใส่ใจเป็นพิเศษ (ยังไม่พร้อมรับวัคซีน)';
+        badgeStyle = 'background:#FED7D7; color:#742A2A; border: 1px solid #FEB2B2;';
+        desc = 'ท่านมีข้อกังวลสูงเกี่ยวกับวัคซีน วิทยากรและเจ้าหน้าที่ยินดีให้ข้อมูลและปรึกษาเพื่อความสบายใจของท่าน';
+      }
+
+      return { score: totalScore, groupNum, code, name, badgeStyle, desc };
+    }
+
     async function submitKsAssessment() {
+      const q1 = Number(ksAnswers.q1 || 3);
+      const q2 = Number(ksAnswers.q2 || 3);
+      const q3 = Number(ksAnswers.q3 || 3);
+      const q4 = Number(ksAnswers.q4 || 3);
+      const q5 = Number(ksAnswers.q5 || 3);
+      const q6 = Number(ksAnswers.q6 || 3);
+      const q7 = Number(ksAnswers.q7 || 3);
+      const q8 = Number(ksAnswers.q8 || 3);
+
+      const ksEval = calculateKsScoreAndGroup(q1, q2, q3, q4, q5, q6, q7, q8);
+
       const payload = {
         sessionId: currentSessionId,
         recordId: currentRecordId,
+        totalScore: ksEval.score,
+        ksCategoryCode: ksEval.code,
+        ksCategoryName: ksEval.name,
         ...ksAnswers
       };
       Swal.fire({ title: 'กำลังประเมินคำตอบ...', didOpen: () => Swal.showLoading() });
       try {
-        const res = await fetch('/api/assessments/ks', {
+        await fetch('/api/assessments/ks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        const result = await res.json();
         Swal.close();
-        if (result.success) {
-          Swal.fire('ประเมินสำเร็จ', 'บันทึกข้อมูลการประเมินเบื้องต้นเรียบร้อยแล้ว', 'success').then(() => {
-            navigateTo('page-pre-lecture-complete');
-          });
-        } else {
-          Swal.fire('ผิดพลาด', result.message, 'error');
-        }
       } catch (e) {
         Swal.close();
-        navigateTo('page-pre-lecture-complete');
       }
+
+      // Populate personal KS result card for parent
+      const userCard = document.getElementById('userKsResultCard');
+      const scoreDisp = document.getElementById('userKsScoreDisplay');
+      const badgeDisp = document.getElementById('userKsCategoryBadge');
+      const descDisp = document.getElementById('userKsDescription');
+
+      if (userCard && scoreDisp && badgeDisp && descDisp) {
+        const sign = ksEval.score > 0 ? '+' : '';
+        scoreDisp.innerText = `${sign}${ksEval.score} / +15`;
+        badgeDisp.innerText = ksEval.name;
+        badgeDisp.style.cssText = `font-size: 12px; padding: 6px 12px; font-weight: 700; ${ksEval.badgeStyle}`;
+        descDisp.innerText = ksEval.desc;
+        userCard.style.display = 'block';
+      }
+
+      navigateTo('page-pre-lecture-complete');
     }
 
     function renderPersonalizedLearning(flags) {
@@ -1167,6 +1272,24 @@
           }
           if (document.getElementById('kpiKsAvg')) {
             document.getElementById('kpiKsAvg').innerText = `${stats.ksOverallAvg || '0.00'} / 5.00`;
+          }
+
+          if (stats.ksGroupCounts) {
+            const tot = stats.totalRespondents || 0;
+            const g1 = stats.ksGroupCounts.g1 || 0;
+            const g2 = stats.ksGroupCounts.g2 || 0;
+            const g3 = stats.ksGroupCounts.g3 || 0;
+            const g4 = stats.ksGroupCounts.g4 || 0;
+
+            const p1 = tot > 0 ? ((g1 / tot) * 100).toFixed(1) : '0';
+            const p2 = tot > 0 ? ((g2 / tot) * 100).toFixed(1) : '0';
+            const p3 = tot > 0 ? ((g3 / tot) * 100).toFixed(1) : '0';
+            const p4 = tot > 0 ? ((g4 / tot) * 100).toFixed(1) : '0';
+
+            if (document.getElementById('ksGroup1Count')) document.getElementById('ksGroup1Count').innerText = `${g1} คน (${p1}%)`;
+            if (document.getElementById('ksGroup2Count')) document.getElementById('ksGroup2Count').innerText = `${g2} คน (${p2}%)`;
+            if (document.getElementById('ksGroup3Count')) document.getElementById('ksGroup3Count').innerText = `${g3} คน (${p3}%)`;
+            if (document.getElementById('ksGroup4Count')) document.getElementById('ksGroup4Count').innerText = `${g4} คน (${p4}%)`;
           }
 
           renderPreTestChart(stats.preItemAccuracies || [0,0,0,0,0,0,0,0,0,0]);

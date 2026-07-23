@@ -103,7 +103,10 @@ function saveAcceptanceAssessment(data) {
     var q7 = Number(data.q7);
     var q8 = Number(data.q8);
 
-    // Calculate Routing Flags without cutoff/scoring sum
+    // Calculate KS Model Total Score (-15 to +15) and 4-tier Classification
+    var ksEval = calculateKsScoreAndGroup(q1, q2, q3, q4, q5, q6, q7, q8);
+
+    // Calculate Routing Flags
     var flagSafety = q5 >= 4 ? 'YES' : 'NO';
     var flagReligious = q6 >= 4 ? 'YES' : 'NO';
     var flagAccess = q7 >= 4 ? 'YES' : 'NO';
@@ -117,6 +120,9 @@ function saveAcceptanceAssessment(data) {
       RecordID: data.recordId,
       SubmittedAt: now,
       Q1: q1, Q2: q2, Q3: q3, Q4: q4, Q5: q5, Q6: q6, Q7: q7, Q8: q8,
+      TotalKsScore: ksEval.score,
+      KsCategoryCode: ksEval.code,
+      KsCategoryName: ksEval.name,
       Suggestion: sanitizeInput(data.suggestion || ''),
       FlagSafetyConcern: flagSafety,
       FlagReligiousBelief: flagReligious,
@@ -124,8 +130,8 @@ function saveAcceptanceAssessment(data) {
       FlagSocialMedia: flagSocialMedia,
       FlagLowAppointmentIntention: flagLowAppt,
       FlagLowConfidence: flagLowConfidence,
-      ClassificationStatus: 'รอเจ้าหน้าที่ประเมิน',
-      ClassificationResult: '',
+      ClassificationStatus: ksEval.name,
+      ClassificationResult: ksEval.score >= 0 ? 'ACCEPTED' : 'NEEDS_CARE',
       ScoringVersion: CONFIG.SCORING_VERSION,
       ReviewedBy: '',
       ReviewedAt: '',
@@ -139,6 +145,9 @@ function saveAcceptanceAssessment(data) {
 
     return standardResponse(true, 'บันทึกแบบประเมินเรียบร้อยแล้ว', {
       assessment: record,
+      ksScore: ksEval.score,
+      ksCategoryCode: ksEval.code,
+      ksCategoryName: ksEval.name,
       personalizedFlags: {
         safety: flagSafety === 'YES',
         religious: flagReligious === 'YES',
@@ -283,6 +292,25 @@ function getDashboardAnalytics(data) {
   });
   var preOverallAvg = preCount > 0 ? (preTotalScoreSum / preCount).toFixed(2) : 0;
 
+  // Compute KS Model Group Distribution (Group 1: >= +7, Group 2: 0..+6, Group 3: -1..-7, Group 4: <= -8)
+  var ksGroupCounts = { g1: 0, g2: 0, g3: 0, g4: 0 };
+  filteredKs.forEach(function(row) {
+    var q1 = Number(row.Q1 || 3);
+    var q2 = Number(row.Q2 || 3);
+    var q3 = Number(row.Q3 || 3);
+    var q4 = Number(row.Q4 || 3);
+    var q5 = Number(row.Q5 || 3);
+    var q6 = Number(row.Q6 || 3);
+    var q7 = Number(row.Q7 || 3);
+    var q8 = Number(row.Q8 || 3);
+
+    var res = calculateKsScoreAndGroup(q1, q2, q3, q4, q5, q6, q7, q8);
+    if (res.groupNum === 1) ksGroupCounts.g1++;
+    else if (res.groupNum === 2) ksGroupCounts.g2++;
+    else if (res.groupNum === 3) ksGroupCounts.g3++;
+    else if (res.groupNum === 4) ksGroupCounts.g4++;
+  });
+
   return standardResponse(true, 'ดึงข้อมูล analytics สำเร็จ', {
     totalRespondents: ksCount,
     preTestCount: preCount,
@@ -290,6 +318,7 @@ function getDashboardAnalytics(data) {
     preItemAccuracies: preItemAccuracies,
     ksOverallAvg: ksOverallAvg,
     ksItemAverages: ksItemAverages,
+    ksGroupCounts: ksGroupCounts,
     filterApplied: {
       startDate: filterStartDate,
       endDate: filterEndDate,
@@ -297,5 +326,41 @@ function getDashboardAnalytics(data) {
       subdistrict: filterSubdistrict
     }
   });
+}
+
+function calculateKsScoreAndGroup(q1, q2, q3, q4, q5, q6, q7, q8) {
+  var scorePos = (q1 - 3) + (q2 - 3) + (q3 - 3) + (q4 - 3);
+  var scoreNeg = (3 - q5) + (3 - q6) + (3 - q7) + (3 - q8);
+  var rawScore = scorePos + scoreNeg;
+  var totalScore = Math.max(-15, Math.min(15, rawScore));
+
+  var code = '';
+  var name = '';
+  var groupNum = 1;
+
+  if (totalScore >= 7) {
+    groupNum = 1;
+    code = 'ACCEPTANT';
+    name = 'กลุ่มพร้อมรับบริการวัคซีน (ยอมรับและยินดีรับบริการ)';
+  } else if (totalScore >= 0) {
+    groupNum = 2;
+    code = 'HESITANT_ACCEPT';
+    name = 'กลุ่มเปิดรับและพร้อมรับวัคซีน (มีความลังเลเล็กน้อย/ยินดีฉีด)';
+  } else if (totalScore >= -7) {
+    groupNum = 3;
+    code = 'HESITANT_DELAY';
+    name = 'กลุ่มมีข้อกังวลชะลอการรับวัคซีน (ต้องการคำแนะนำเพิ่มเติม)';
+  } else {
+    groupNum = 4;
+    code = 'SPECIAL_CARE';
+    name = 'กลุ่มต้องการการดูแลใส่ใจเป็นพิเศษ (ยังไม่พร้อมรับวัคซีน)';
+  }
+
+  return {
+    score: totalScore,
+    groupNum: groupNum,
+    code: code,
+    name: name
+  };
 }
 
