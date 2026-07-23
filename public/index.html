@@ -166,6 +166,24 @@
           <label class="form-label">อำเภอ *</label>
           <input type="text" class="form-control" id="district" required placeholder="เช่น มายอ">
         </div>
+        <div class="form-group">
+          <label class="form-label">บุคคลที่มีอิทธิพลต่อการตัดสินใจในการรับวัคซีน *</label>
+          <select class="form-control" id="decisionInfluencer" required onchange="toggleInfluencerOther()">
+            <option value="">-- เลือกบุคคลที่มีอิทธิพลต่อการตัดสินใจ --</option>
+            <option value="พ่อ">พ่อ</option>
+            <option value="แม่">แม่</option>
+            <option value="ปู่/ย่า/ตา/ยาย">ปู่/ย่า/ตา/ยาย</option>
+            <option value="ผู้นำศาสนา">ผู้นำศาสนา</option>
+            <option value="เจ้าหน้าที่สาธารณสุข">เจ้าหน้าที่สาธารณสุข</option>
+            <option value="เพื่อนบ้าน">เพื่อนบ้าน</option>
+            <option value="อสม.">อสม.</option>
+            <option value="อื่นๆ">อื่นๆ (ระบุ)</option>
+          </select>
+        </div>
+        <div class="form-group" id="influencerOtherGroup" style="display: none;">
+          <label class="form-label">ระบุบุคคลที่มีอิทธิพลอื่นๆ *</label>
+          <input type="text" class="form-control" id="decisionInfluencerOther" placeholder="เช่น ญาติสนิท หรือ ครู">
+        </div>
         <button type="submit" class="btn btn--primary" style="margin-top: 12px;">บันทึกข้อมูลและถัดไป</button>
       </form>
     </section>
@@ -504,6 +522,15 @@
 
       <!-- TAB 2: KS MODEL ANALYTICS -->
       <div id="dashTabKsModel" style="display: none;">
+        <!-- INTERPRETATION NOTICE BANNER -->
+        <div class="alert-card" style="background: #FFF5F5; border: 2px solid #FEB2B2; margin-bottom: 16px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: #C53030; margin-bottom: 6px;">📌 หลักการแปลผลคะแนน KS Model (จากผู้ออกแบบระบบ):</h4>
+          <ul style="font-size: 13px; color: #742A2A; margin: 0; padding-left: 20px; line-height: 1.6;">
+            <li><strong>ข้อ 1 - 4 (ความเชื่อมั่น/เจตคติเชิงบวก):</strong> <u>คะแนนยิ่งมากยิ่งดี</u> (แสดงเจตคติและความพร้อมในการรับวัคซีนสูง)</li>
+            <li><strong>ข้อ 5 - 8 (ความกังวล/โชคชะตา/อุปสรรค/โซเชียล):</strong> <u>คะแนนยิ่งมากยิ่งไม่ดี</u> (สะท้อนปัญหา ความกังวล หรืออุปสรรคสูง ต้องนำไปวางแผนแก้ไขการจัดบริการสาธารณสุข)</li>
+          </ul>
+        </div>
+
         <!-- KPI SUMMARY FOR KS MODEL -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
           <div class="card" style="padding: 14px; text-align: center; background: #EDF2F7; margin: 0;">
@@ -537,7 +564,7 @@
                 <tr style="background: #EDF2F7; text-align: left;">
                   <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อที่ & หัวข้อแบบประเมิน</th>
                   <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 100px;">ค่าเฉลี่ย (1-5)</th>
-                  <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 120px;">ระดับการยอมรับ</th>
+                  <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 140px;">การแปลผล (ดี / ไม่ดี)</th>
                   <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อแนะนำแก้ปัญหา/จัดบริการ</th>
                 </tr>
               </thead>
@@ -734,8 +761,27 @@
       }
     }
 
+    function toggleInfluencerOther() {
+      const val = document.getElementById('decisionInfluencer') ? document.getElementById('decisionInfluencer').value : '';
+      const otherGroup = document.getElementById('influencerOtherGroup');
+      const otherInput = document.getElementById('decisionInfluencerOther');
+      if (val === 'อื่นๆ') {
+        if (otherGroup) otherGroup.style.display = 'block';
+        if (otherInput) otherInput.required = true;
+      } else {
+        if (otherGroup) otherGroup.style.display = 'none';
+        if (otherInput) { otherInput.required = false; otherInput.value = ''; }
+      }
+    }
+
     async function handleRegistration(e) {
       e.preventDefault();
+      let influencerVal = document.getElementById('decisionInfluencer') ? document.getElementById('decisionInfluencer').value : '';
+      if (influencerVal === 'อื่นๆ') {
+        const customText = (document.getElementById('decisionInfluencerOther') ? document.getElementById('decisionInfluencerOther').value : '').trim();
+        influencerVal = customText ? `อื่นๆ (${customText})` : 'อื่นๆ';
+      }
+
       const payload = {
         sessionId: currentSessionId,
         parentName: document.getElementById('parentName').value,
@@ -747,6 +793,7 @@
         village: document.getElementById('village').value,
         subdistrict: document.getElementById('subdistrict') ? document.getElementById('subdistrict').value : '',
         district: document.getElementById('district') ? document.getElementById('district').value : '',
+        influencers: influencerVal,
         consent: true,
         hasVaccineBook: true
       };
@@ -1298,25 +1345,25 @@
 
         if (item.isPositive) {
           if (avg >= 4.0) {
-            statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">สูงมาก</span>';
+            statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">✅ คะแนนสูง (ดีมาก)</span>';
             advice = item.recHigh;
           } else if (avg >= 3.0) {
-            statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">ปานกลาง</span>';
+            statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">⚡ คะแนนปานกลาง</span>';
             advice = item.recLow;
           } else {
-            statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">ต่ำ (ต้องแก้ไข)</span>';
+            statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">⚠️ คะแนนต่ำ (ไม่ดี - ต้องแก้ไข)</span>';
             advice = item.recLow;
           }
         } else {
-          // Negative items
+          // Negative items (Q5, Q6, Q7, Q8: High score = BAD)
           if (avg >= 3.5) {
-            statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">กังวลสูง (ต้องแก้ไข)</span>';
+            statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">⚠️ คะแนนสูง (ไม่ดี - ต้องแก้ไข)</span>';
             advice = item.recHigh;
           } else if (avg >= 2.5) {
-            statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">กังวลปานกลาง</span>';
+            statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">⚡ คะแนนปานกลาง (เฝ้าระวัง)</span>';
             advice = item.recHigh;
           } else {
-            statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">กังวลต่ำ</span>';
+            statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">✅ คะแนนต่ำ (ดี)</span>';
             advice = item.recLow;
           }
         }

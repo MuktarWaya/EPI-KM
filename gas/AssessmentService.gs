@@ -27,6 +27,7 @@ function registerParentAndChild(data) {
       Village: sanitizeInput(data.village || ''),
       Subdistrict: sanitizeInput(data.subdistrict || ''),
       District: sanitizeInput(data.district || ''),
+      InfluencerPerson: sanitizeInput(data.influencers || ''),
       VolunteerName: sanitizeInput(data.volunteerName || ''),
       HasVaccineBook: data.hasVaccineBook ? 'YES' : 'NO',
       Consent: data.consent ? 'YES' : 'NO',
