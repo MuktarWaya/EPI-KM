@@ -139,7 +139,21 @@ function appendSheetRow(sheetName, dataObject) {
     sheet = ss.getSheetByName(sheetName);
   }
 
-  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var lastCol = sheet.getLastColumn();
+  var headers = [];
+  if (lastCol > 0) {
+    headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  }
+
+  // If header row is empty, setup headers from schema or object keys
+  if (headers.length === 0 || sheet.getLastRow() === 0) {
+    var schemaHeaders = getSheetSchemas()[sheetName];
+    headers = schemaHeaders || Object.keys(dataObject);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#F6EFDC');
+    sheet.setFrozenRows(1);
+  }
+
   var missingCols = [];
   for (var key in dataObject) {
     if (headers.indexOf(key) === -1) {

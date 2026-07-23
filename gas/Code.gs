@@ -11,7 +11,8 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify(response))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify(standardResponse(false, 'เกิดข้อผิดพลาดในการประมวลผล', null, err.toString())))
+    var errMsg = err && err.message ? err.message : err.toString();
+    return ContentService.createTextOutput(JSON.stringify(standardResponse(false, 'เกิดข้อผิดพลาดในการประมวลผล: ' + errMsg, null, errMsg)))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -28,7 +29,8 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify(response))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify(standardResponse(false, 'เกิดข้อผิดพลาดในการประมวลผล', null, err.toString())))
+    var errMsg = err && err.message ? err.message : err.toString();
+    return ContentService.createTextOutput(JSON.stringify(standardResponse(false, 'เกิดข้อผิดพลาดในการประมวลผล: ' + errMsg, null, errMsg)))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
