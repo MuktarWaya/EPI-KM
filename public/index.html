@@ -1228,13 +1228,6 @@
     }
 
     function openInstructorDashboard() {
-      const today = new Date().toISOString().substring(0, 10);
-      if (!document.getElementById('dashStartDate').value) {
-        document.getElementById('dashStartDate').value = today;
-      }
-      if (!document.getElementById('dashEndDate').value) {
-        document.getElementById('dashEndDate').value = today;
-      }
       navigateTo('page-instructor-dashboard');
       switchDashboardTab('pretest');
       loadDashboardAnalytics();
@@ -1253,7 +1246,7 @@
           endDate,
           village,
           subdistrict,
-          sessionId: currentSessionId
+          sessionId: 'ALL'
         });
         const res = await fetch(`/api/analytics/dashboard?${query.toString()}`);
         const data = await res.json();
