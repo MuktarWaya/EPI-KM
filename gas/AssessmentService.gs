@@ -203,9 +203,15 @@ function generateAssessmentFlags(assessment) {
 function getDashboardAnalytics(data) {
   var filterStartDate = data && data.startDate ? data.startDate : '';
   var filterEndDate = data && data.endDate ? data.endDate : '';
-  var filterVillage = data && data.village ? data.village : 'ALL';
-  var filterSubdistrict = data && data.subdistrict ? data.subdistrict.trim().toLowerCase() : 'ALL';
+  var filterVillage = data && data.village ? data.village.trim() : 'ALL';
+  var rawSubdistrict = data && data.subdistrict ? data.subdistrict.trim().toLowerCase() : '';
   var filterSessionId = data && data.sessionId ? data.sessionId : '';
+
+  // Check if subdistrict filter matches ALL
+  var isAllSubdistrict = (!rawSubdistrict || rawSubdistrict === 'all' || rawSubdistrict === 'ทั้งหมด' || rawSubdistrict === 'ทุกตำบล');
+
+  // Check if village filter matches ALL
+  var isAllVillage = (!filterVillage || filterVillage === 'ALL' || filterVillage === 'ทั้งหมด' || filterVillage === 'ทุกหมู่บ้าน');
 
   // Get Children map
   var children = getSheetData('Children') || [];
@@ -225,10 +231,10 @@ function getDashboardAnalytics(data) {
     }
     if (filterStartDate && dateStr < filterStartDate) return false;
     if (filterEndDate && dateStr > filterEndDate) return false;
-    if (filterVillage && filterVillage !== 'ALL' && record.Village !== filterVillage) return false;
-    if (filterSubdistrict && filterSubdistrict !== 'all' && filterSubdistrict !== '') {
-      var sub = (record.Subdistrict || '').toLowerCase();
-      if (sub.indexOf(filterSubdistrict) === -1) return false;
+    if (!isAllVillage && record.Village !== filterVillage) return false;
+    if (!isAllSubdistrict) {
+      var sub = (record.Subdistrict || '').trim().toLowerCase();
+      if (sub.indexOf(rawSubdistrict) === -1 && rawSubdistrict.indexOf(sub) === -1) return false;
     }
     return true;
   });
@@ -244,10 +250,10 @@ function getDashboardAnalytics(data) {
     }
     if (filterStartDate && dateStr < filterStartDate) return false;
     if (filterEndDate && dateStr > filterEndDate) return false;
-    if (filterVillage && filterVillage !== 'ALL' && record.Village !== filterVillage) return false;
-    if (filterSubdistrict && filterSubdistrict !== 'all' && filterSubdistrict !== '') {
-      var sub = (record.Subdistrict || '').toLowerCase();
-      if (sub.indexOf(filterSubdistrict) === -1) return false;
+    if (!isAllVillage && record.Village !== filterVillage) return false;
+    if (!isAllSubdistrict) {
+      var sub = (record.Subdistrict || '').trim().toLowerCase();
+      if (sub.indexOf(rawSubdistrict) === -1 && rawSubdistrict.indexOf(sub) === -1) return false;
     }
     return true;
   });
