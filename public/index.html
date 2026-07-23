@@ -445,83 +445,107 @@
         </div>
       </div>
 
-      <!-- KPI SUMMARY GRID -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px;">
-        <div class="card" style="padding: 14px; text-align: center; background: #EDF2F7; margin: 0;">
-          <p style="font-size: 12px; font-weight: 700; color: #4A5568;">จำนวนผู้ตอบทั้งหมด</p>
-          <h2 id="kpiRespondents" style="font-size: 26px; color: #2B6CB0; margin-top: 4px;">0 คน</h2>
+      <!-- DASHBOARD TAB SWITCHER -->
+      <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; flex-wrap: wrap;">
+        <button class="btn btn--primary" id="tabBtnPretest" style="padding: 10px 18px;" onclick="switchDashboardTab('pretest')">
+          🎯 1. คะแนน Pre-test (วัดความรู้ก่อนเรียน)
+        </button>
+        <button class="btn btn--soft" id="tabBtnKsModel" style="padding: 10px 18px;" onclick="switchDashboardTab('ksmodel')">
+          📊 2. คะแนน KS Model (วัดความกังวลและการยอมรับ)
+        </button>
+      </div>
+
+      <!-- TAB 1: PRE-TEST ANALYTICS -->
+      <div id="dashTabPretest">
+        <!-- KPI SUMMARY FOR PRETEST -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+          <div class="card" style="padding: 14px; text-align: center; background: #EDF2F7; margin: 0;">
+            <p style="font-size: 12px; font-weight: 700; color: #4A5568;">จำนวนผู้ทำ Pre-test</p>
+            <h2 id="kpiPreRespondents" style="font-size: 26px; color: #2B6CB0; margin-top: 4px;">0 คน</h2>
+          </div>
+          <div class="card" style="padding: 14px; text-align: center; background: #EBF8FF; margin: 0;">
+            <p style="font-size: 12px; font-weight: 700; color: #2B6CB0;">คะแนนเฉลี่ยภาพรวม Pre-test</p>
+            <h2 id="kpiPreAvg" style="font-size: 26px; color: var(--blue); margin-top: 4px;">0.00 / 10</h2>
+          </div>
         </div>
-        <div class="card" style="padding: 14px; text-align: center; background: #EBF8FF; margin: 0;">
-          <p style="font-size: 12px; font-weight: 700; color: #2B6CB0;">คะแนนเฉลี่ย Pre-test</p>
-          <h2 id="kpiPreAvg" style="font-size: 26px; color: var(--blue); margin-top: 4px;">0.00 / 10</h2>
+
+        <!-- PRE-TEST CHART SECTION -->
+        <div class="card" style="padding: 16px; margin-bottom: 20px;">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">
+            🎯 ร้อยละความถูกต้องของแบบทดสอบก่อนเรียน (Pre-test) แยกตามข้อ (1 - 10)
+          </h3>
+          <div style="position: relative; min-height: 260px;">
+            <canvas id="preTestChartCanvas"></canvas>
+          </div>
         </div>
-        <div class="card" style="padding: 14px; text-align: center; background: #F0FFF4; margin: 0;">
-          <p style="font-size: 12px; font-weight: 700; color: var(--green);">คะแนนเฉลี่ยรวม KS Model</p>
-          <h2 id="kpiKsAvg" style="font-size: 26px; color: var(--green); margin-top: 4px;">0.00 / 5.00</h2>
+
+        <!-- PRE-TEST ITEM DETAIL TABLE -->
+        <div class="card" style="padding: 16px; margin-bottom: 20px;">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">
+            📝 สรุปความถูกต้องรายข้อ Pre-test (เพื่อเน้นย้ำช่วงบรรยาย)
+          </h3>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="background: #EBF8FF; text-align: left;">
+                  <th style="padding: 8px; border: 1px solid #BEE3F8;">ข้อที่ & ประเด็นความรู้</th>
+                  <th style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; width: 110px;">ตอบถูก (%)</th>
+                  <th style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; width: 120px;">สถานะความเข้าใจ</th>
+                  <th style="padding: 8px; border: 1px solid #BEE3F8;">ประเด็นเน้นย้ำระหว่างบรรยาย</th>
+                </tr>
+              </thead>
+              <tbody id="preItemTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- PRE-TEST CHART SECTION -->
-      <div class="card" style="padding: 16px; margin-bottom: 20px;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">
-          🎯 ร้อยละความถูกต้องของแบบทดสอบก่อนเรียน (Pre-test) แยกตามข้อ (1 - 10)
-        </h3>
-        <div style="position: relative; min-height: 260px;">
-          <canvas id="preTestChartCanvas"></canvas>
+      <!-- TAB 2: KS MODEL ANALYTICS -->
+      <div id="dashTabKsModel" style="display: none;">
+        <!-- KPI SUMMARY FOR KS MODEL -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+          <div class="card" style="padding: 14px; text-align: center; background: #EDF2F7; margin: 0;">
+            <p style="font-size: 12px; font-weight: 700; color: #4A5568;">จำนวนผู้ตอบ KS Model</p>
+            <h2 id="kpiRespondents" style="font-size: 26px; color: #2B6CB0; margin-top: 4px;">0 คน</h2>
+          </div>
+          <div class="card" style="padding: 14px; text-align: center; background: #F0FFF4; margin: 0;">
+            <p style="font-size: 12px; font-weight: 700; color: var(--green);">คะแนนเฉลี่ยรวม KS Model</p>
+            <h2 id="kpiKsAvg" style="font-size: 26px; color: var(--green); margin-top: 4px;">0.00 / 5.00</h2>
+          </div>
         </div>
-      </div>
 
-      <!-- PRE-TEST ITEM DETAIL TABLE -->
-      <div class="card" style="padding: 16px; margin-bottom: 20px;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">
-          📝 สรุปความถูกต้องรายข้อ Pre-test (เพื่อเน้นย้ำช่วงบรรยาย)
-        </h3>
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead>
-              <tr style="background: #EBF8FF; text-align: left;">
-                <th style="padding: 8px; border: 1px solid #BEE3F8;">ข้อที่ & ประเด็นความรู้</th>
-                <th style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; width: 110px;">ตอบถูก (%)</th>
-                <th style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; width: 120px;">สถานะความเข้าใจ</th>
-                <th style="padding: 8px; border: 1px solid #BEE3F8;">ประเด็นเน้นย้ำระหว่างบรรยาย</th>
-              </tr>
-            </thead>
-            <tbody id="preItemTableBody">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
+        <!-- KS MODEL CHART SECTION -->
+        <div class="card" style="padding: 16px; margin-bottom: 20px;">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--ink);">
+            📊 ค่าเฉลี่ยการตอบแบบประเมิน KS Model แยกตามข้อ (1 - 5 คะแนน)
+          </h3>
+          <div style="position: relative; min-height: 280px;">
+            <canvas id="ksChartCanvas"></canvas>
+          </div>
         </div>
-      </div>
 
-      <!-- KS MODEL CHART SECTION -->
-      <div class="card" style="padding: 16px; margin-bottom: 20px;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--ink);">
-          📊 ค่าเฉลี่ยการตอบแบบประเมิน KS Model แยกตามข้อ (1 - 5 คะแนน)
-        </h3>
-        <div style="position: relative; min-height: 280px;">
-          <canvas id="ksChartCanvas"></canvas>
-        </div>
-      </div>
-
-      <!-- ITEM DETAIL TABLE FOR SERVICE IMPROVEMENT -->
-      <div class="card" style="padding: 16px; margin-bottom: 20px;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">
-          📋 ตารางผลคะแนนเฉลี่ยรายข้อ KS Model เพื่อนำไปปรับปรุงการจัดบริการ
-        </h3>
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead>
-              <tr style="background: #EDF2F7; text-align: left;">
-                <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อที่ & หัวข้อแบบประเมิน</th>
-                <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 100px;">ค่าเฉลี่ย (1-5)</th>
-                <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 120px;">ระดับการยอมรับ</th>
-                <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อแนะนำแก้ปัญหา/จัดบริการ</th>
-              </tr>
-            </thead>
-            <tbody id="ksItemTableBody">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
+        <!-- ITEM DETAIL TABLE FOR SERVICE IMPROVEMENT -->
+        <div class="card" style="padding: 16px; margin-bottom: 20px;">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">
+            📋 ตารางผลคะแนนเฉลี่ยรายข้อ KS Model เพื่อนำไปปรับปรุงการจัดบริการ
+          </h3>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="background: #EDF2F7; text-align: left;">
+                  <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อที่ & หัวข้อแบบประเมิน</th>
+                  <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 100px;">ค่าเฉลี่ย (1-5)</th>
+                  <th style="padding: 8px; border: 1px solid #CBD5E0; text-align: center; width: 120px;">ระดับการยอมรับ</th>
+                  <th style="padding: 8px; border: 1px solid #CBD5E0;">ข้อแนะนำแก้ปัญหา/จัดบริการ</th>
+                </tr>
+              </thead>
+              <tbody id="ksItemTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1032,6 +1056,25 @@
     let ksChartInstance = null;
     let preTestChartInstance = null;
 
+    function switchDashboardTab(tabName) {
+      const preTab = document.getElementById('dashTabPretest');
+      const ksTab = document.getElementById('dashTabKsModel');
+      const btnPre = document.getElementById('tabBtnPretest');
+      const btnKs = document.getElementById('tabBtnKsModel');
+
+      if (tabName === 'pretest') {
+        if (preTab) preTab.style.display = 'block';
+        if (ksTab) ksTab.style.display = 'none';
+        if (btnPre) btnPre.className = 'btn btn--primary';
+        if (btnKs) btnKs.className = 'btn btn--soft';
+      } else {
+        if (preTab) preTab.style.display = 'none';
+        if (ksTab) ksTab.style.display = 'block';
+        if (btnPre) btnPre.className = 'btn btn--soft';
+        if (btnKs) btnKs.className = 'btn btn--primary';
+      }
+    }
+
     function openInstructorDashboard() {
       const today = new Date().toISOString().substring(0, 10);
       if (!document.getElementById('dashStartDate').value) {
@@ -1041,6 +1084,7 @@
         document.getElementById('dashEndDate').value = today;
       }
       navigateTo('page-instructor-dashboard');
+      switchDashboardTab('pretest');
       loadDashboardAnalytics();
     }
 
@@ -1065,9 +1109,18 @@
 
         if (data.success && data.data) {
           const stats = data.data;
-          document.getElementById('kpiRespondents').innerText = `${stats.totalRespondents || 0} คน`;
-          document.getElementById('kpiPreAvg').innerText = `${stats.preTestAvgScore || '0.00'} / 10`;
-          document.getElementById('kpiKsAvg').innerText = `${stats.ksOverallAvg || '0.00'} / 5.00`;
+          if (document.getElementById('kpiPreRespondents')) {
+            document.getElementById('kpiPreRespondents').innerText = `${stats.preTestCount || 0} คน`;
+          }
+          if (document.getElementById('kpiRespondents')) {
+            document.getElementById('kpiRespondents').innerText = `${stats.totalRespondents || 0} คน`;
+          }
+          if (document.getElementById('kpiPreAvg')) {
+            document.getElementById('kpiPreAvg').innerText = `${stats.preTestAvgScore || '0.00'} / 10`;
+          }
+          if (document.getElementById('kpiKsAvg')) {
+            document.getElementById('kpiKsAvg').innerText = `${stats.ksOverallAvg || '0.00'} / 5.00`;
+          }
 
           renderPreTestChart(stats.preItemAccuracies || [0,0,0,0,0,0,0,0,0,0]);
           renderPreTestItemTable(stats.preItemAccuracies || [0,0,0,0,0,0,0,0,0,0]);
