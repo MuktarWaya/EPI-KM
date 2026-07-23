@@ -6,19 +6,21 @@ function registerParentAndChild(data) {
   return withLock(function() {
     var recordId = generateId('REC');
     var now = new Date().toISOString();
-    var birthDate = new Date(data.birthDate);
-    var ageMonths = calculateAgeMonths(birthDate);
+    var birthDate = data.birthDate ? new Date(data.birthDate) : null;
+    var ageMonths = (birthDate && !isNaN(birthDate.getTime())) ? calculateAgeMonths(birthDate) : 0;
+    var rel = sanitizeInput(data.relationship || 'มารดา');
+    var childName = sanitizeInput(data.childName || (rel === 'อสม.' ? 'อสม. (ไม่ระบุเด็ก)' : '-'));
 
     var record = {
       RecordID: recordId,
       SessionID: data.sessionId || 'DEFAULT',
       CreatedAt: now,
       ParentName: sanitizeInput(data.parentName),
-      Relationship: sanitizeInput(data.relationship || 'มารดา'),
+      Relationship: rel,
       Phone: validatePhone(data.phone),
       LineID: sanitizeInput(data.lineId || ''),
-      ChildName: sanitizeInput(data.childName),
-      BirthDate: data.birthDate,
+      ChildName: childName,
+      BirthDate: data.birthDate || '',
       AgeMonths: ageMonths,
       Gender: sanitizeInput(data.gender || 'ไม่ระบุ'),
       HouseNo: sanitizeInput(data.houseNo || ''),
@@ -35,7 +37,7 @@ function registerParentAndChild(data) {
     };
 
     appendSheetRow('Children', record);
-    writeAuditLog({ UserID: 'PARENT', Role: 'PARENT', Action: 'REGISTER_CHILD', RecordID: recordId, Detail: 'Registered child ' + data.childName });
+    writeAuditLog({ UserID: 'PARENT', Role: 'PARENT', Action: 'REGISTER_CHILD', RecordID: recordId, Detail: 'Registered participant ' + data.parentName + ' (' + rel + ')' });
 
     return standardResponse(true, 'ลงทะเบียนสำเร็จ', record);
   });

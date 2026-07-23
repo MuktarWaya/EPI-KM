@@ -118,22 +118,23 @@
         </div>
         <div class="form-group">
           <label class="form-label">ความสัมพันธ์กับเด็ก</label>
-          <select class="form-control" id="relationship">
+          <select class="form-control" id="relationship" onchange="toggleChildFields()">
             <option value="มารดา">มารดา</option>
             <option value="บิดา">บิดา</option>
             <option value="ปู่/ย่า/ตา/ยาย">ปู่/ย่า/ตา/ยาย</option>
             <option value="ผู้ดูแล">ผู้ดูแล</option>
+            <option value="อสม.">อสม.</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">เบอร์โทรศัพท์ติดต่อ *</label>
           <input type="tel" class="form-control" id="phone" required placeholder="เช่น 0812345678">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="childNameGroup">
           <label class="form-label">ชื่อ-นามสกุล เด็ก *</label>
           <input type="text" class="form-control" id="childName" required placeholder="เช่น ด.ช.อามีน">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="birthDateGroup">
           <label class="form-label">วันเดือนปีเกิดเด็ก *</label>
           <input type="date" class="form-control" id="birthDate" required onchange="calculateAge()">
           <span id="ageDisplay" style="font-size: 13px; font-weight: 700; color: var(--green); display: block; margin-top: 4px;"></span>
@@ -631,7 +632,12 @@
     }
 
     function calculateAge() {
-      const birth = new Date(document.getElementById('birthDate').value);
+      const val = document.getElementById('birthDate').value;
+      if (!val) {
+        document.getElementById('ageDisplay').innerText = '';
+        return;
+      }
+      const birth = new Date(val);
       if (isNaN(birth.getTime())) return;
       const today = new Date();
       let months = (today.getFullYear() - birth.getFullYear()) * 12;
@@ -640,6 +646,28 @@
       const yrs = Math.floor(months / 12);
       const mths = months % 12;
       document.getElementById('ageDisplay').innerText = `อายุคำนวณ: ${yrs} ปี ${mths} เดือน (${months} เดือน)`;
+    }
+
+    function toggleChildFields() {
+      const rel = document.getElementById('relationship').value;
+      const childGroup = document.getElementById('childNameGroup');
+      const birthGroup = document.getElementById('birthDateGroup');
+      const childInput = document.getElementById('childName');
+      const birthInput = document.getElementById('birthDate');
+      const ageDisplay = document.getElementById('ageDisplay');
+
+      if (rel === 'อสม.') {
+        if (childGroup) childGroup.style.display = 'none';
+        if (birthGroup) birthGroup.style.display = 'none';
+        if (childInput) { childInput.required = false; childInput.value = ''; }
+        if (birthInput) { birthInput.required = false; birthInput.value = ''; }
+        if (ageDisplay) ageDisplay.innerText = '';
+      } else {
+        if (childGroup) childGroup.style.display = 'block';
+        if (birthGroup) birthGroup.style.display = 'block';
+        if (childInput) childInput.required = true;
+        if (birthInput) birthInput.required = true;
+      }
     }
 
     async function handleRegistration(e) {
