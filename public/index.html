@@ -14,7 +14,7 @@
   <header class="app-header">
     <div class="brand-title" onclick="navigateTo('page-landing')" style="cursor: pointer;" title="กลับหน้าแรก">
       <div class="icon-tile">💉</div>
-      <span>EPI รพ.สต.ประจัน</span>
+      <span>EPI รพ.สต.</span>
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <button class="btn btn--soft" style="padding: 6px 14px; font-size: 14px;" onclick="navigateTo('page-landing')">
@@ -367,7 +367,7 @@
         <span>Staff Dashboard & สรุปส่งมอบงาน</span>
       </div>
       <div class="alert-card">
-        <strong>หน่วยบริการ:</strong> รพ.สต.ประจัน | <strong>Session:</strong> DEFAULT
+        <strong>หน่วยบริการ:</strong> รพ.สต. | <strong>Session:</strong> DEFAULT
       </div>
       <div style="display: flex; gap: 10px; margin-bottom: 16px;">
         <button class="btn btn--primary" onclick="exportHandoverSummary()">📑 สร้างรายงานส่งมอบ (PDF/Summary)</button>
@@ -497,6 +497,14 @@
     </section>
 
   </main>
+
+  <!-- APP FOOTER -->
+  <footer style="text-align: center; padding: 16px 10px 24px 10px; font-size: 13px; color: #718096; border-top: 1px dashed #CBD5E0; margin-top: 20px;">
+    <p style="font-size: 12px; margin-bottom: 4px;">EPI-KM Platform | คลินิกวัคซีนเด็ก 0-5 ปี</p>
+    <p style="font-size: 11px; color: #A0AEC0;">
+      ผู้พัฒนา: <strong style="color: #4A5568;">นายมุคตาร วายา</strong> พยาบาลวิชาชีพชำนาญการ
+    </p>
+  </footer>
 
   <script>
     let currentRecordId = null;
@@ -871,7 +879,7 @@
         html += '<div class="card" style="border-color: var(--red);"><h4>⚠️ ข้อมูลความปลอดภัยและผลข้างเคียง</h4><p>อาการไข้ต่ำปวดบริเวณที่ฉีดเป็นปฏิกิริยาปกติของร่างกาย สามารถประคบเย็นและทานยาลดไข้ตามคำแนะนำได้</p></div>';
       }
       if (flags.access) {
-        html += '<div class="card" style="border-color: var(--blue);"><h4>🚗 อุปสรรคเวลาและการเดินทาง</h4><p>รพ.สต.ประจัน มีบริการจัดนัดยืดหยุ่นหรือสามารถแจ้ง อสม. เพื่อประสานการเดินทางได้</p></div>';
+        html += '<div class="card" style="border-color: var(--blue);"><h4>🚗 อุปสรรคเวลาและการเดินทาง</h4><p>รพ.สต. มีบริการจัดนัดยืดหยุ่นหรือสามารถแจ้ง อสม. เพื่อประสานการเดินทางได้</p></div>';
       }
       document.getElementById('learningContent').innerHTML = html;
     }
