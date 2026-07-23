@@ -461,7 +461,39 @@
         </div>
       </div>
 
-      <!-- CHART SECTION -->
+      <!-- PRE-TEST CHART SECTION -->
+      <div class="card" style="padding: 16px; margin-bottom: 20px;">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">
+          🎯 ร้อยละความถูกต้องของแบบทดสอบก่อนเรียน (Pre-test) แยกตามข้อ (1 - 10)
+        </h3>
+        <div style="position: relative; min-height: 260px;">
+          <canvas id="preTestChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- PRE-TEST ITEM DETAIL TABLE -->
+      <div class="card" style="padding: 16px; margin-bottom: 20px;">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--blue);">
+          📝 สรุปความถูกต้องรายข้อ Pre-test (เพื่อเน้นย้ำช่วงบรรยาย)
+        </h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="background: #EBF8FF; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #BEE3F8;">ข้อที่ & ประเด็นความรู้</th>
+                <th style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; width: 110px;">ตอบถูก (%)</th>
+                <th style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; width: 120px;">สถานะความเข้าใจ</th>
+                <th style="padding: 8px; border: 1px solid #BEE3F8;">ประเด็นเน้นย้ำระหว่างบรรยาย</th>
+              </tr>
+            </thead>
+            <tbody id="preItemTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KS MODEL CHART SECTION -->
       <div class="card" style="padding: 16px; margin-bottom: 20px;">
         <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--ink);">
           📊 ค่าเฉลี่ยการตอบแบบประเมิน KS Model แยกตามข้อ (1 - 5 คะแนน)
@@ -474,7 +506,7 @@
       <!-- ITEM DETAIL TABLE FOR SERVICE IMPROVEMENT -->
       <div class="card" style="padding: 16px; margin-bottom: 20px;">
         <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">
-          📋 ตารางผลคะแนนเฉลี่ยรายข้อ เพื่อนำไปปรับปรุงการจัดบริการ
+          📋 ตารางผลคะแนนเฉลี่ยรายข้อ KS Model เพื่อนำไปปรับปรุงการจัดบริการ
         </h3>
         <div style="overflow-x: auto;">
           <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
@@ -998,6 +1030,7 @@
     }
 
     let ksChartInstance = null;
+    let preTestChartInstance = null;
 
     function openInstructorDashboard() {
       const today = new Date().toISOString().substring(0, 10);
@@ -1036,6 +1069,8 @@
           document.getElementById('kpiPreAvg').innerText = `${stats.preTestAvgScore || '0.00'} / 10`;
           document.getElementById('kpiKsAvg').innerText = `${stats.ksOverallAvg || '0.00'} / 5.00`;
 
+          renderPreTestChart(stats.preItemAccuracies || [0,0,0,0,0,0,0,0,0,0]);
+          renderPreTestItemTable(stats.preItemAccuracies || [0,0,0,0,0,0,0,0,0,0]);
           renderKsChart(stats.ksItemAverages || [0,0,0,0,0,0,0,0]);
           renderKsItemTable(stats.ksItemAverages || [0,0,0,0,0,0,0,0]);
         } else {
@@ -1045,6 +1080,89 @@
         Swal.close();
         Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อดึงข้อมูลวิเคราะห์ได้', 'error');
       }
+    }
+
+    function renderPreTestChart(accuracies) {
+      const ctx = document.getElementById('preTestChartCanvas').getContext('2d');
+      const labels = ['ข้อ 1','ข้อ 2','ข้อ 3','ข้อ 4','ข้อ 5','ข้อ 6','ข้อ 7','ข้อ 8','ข้อ 9','ข้อ 10'];
+
+      const barColors = accuracies.map(acc => {
+        const val = Number(acc);
+        return val >= 75 ? '#38A169' : (val >= 50 ? '#DD6B20' : '#E53E3E');
+      });
+
+      if (preTestChartInstance) {
+        preTestChartInstance.destroy();
+      }
+
+      preTestChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'ตอบถูก (%)',
+            data: accuracies,
+            backgroundColor: barColors,
+            borderColor: '#2B6CB0',
+            borderWidth: 1.5,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              ticks: { callback: v => v + '%' }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function renderPreTestItemTable(accuracies) {
+      const tbody = document.getElementById('preItemTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const items = [
+        { text: '1. ประโยชน์สำคัญของวัคซีนตามวัยในการสร้างภูมิคุ้มกัน', rec: 'เน้นย้ำประโยชน์สร้างภูมิคุ้มกันโรคอันตรายและป้องกันพิการ' },
+        { text: '2. เด็กแข็งแรงยังต้องรับวัคซีน (ทุกคนมีโอกาสรับเชื้อ)', rec: 'อธิบายว่าเด็กทุกคนมีโอกาสสัมผัสเชื้อโรคแม้แข็งแรงดี' },
+        { text: '3. รับวัคซีนล่าช้ากว่านัด (ฉีดต่อได้ทันทีไม่ต้องเริ่มใหม่)', rec: 'ชี้แจงว่าไม่ต้องเริ่มเข็ม 1 ใหม่ สามารถฉีดต่อตามกำหนดได้' },
+        { text: '4. ความปลอดภัยและความถูกต้องตามหลักศาสนาอิสลาม', rec: 'เน้นย้ำมาตรฐานความปลอดภัยและการรับรองตามหลักศาสนา' },
+        { text: '5. อาการทั่วไปหลังฉีดวัคซีนที่ดูแลและสังเกตที่บ้านได้', rec: 'อธิบายอาการปกติ เช่น ไข้ต่ำ ร้องงอแงเล็กน้อย ปวดแดง' },
+        { text: '6. การปฐมพยาบาลเบื้องต้นเมื่อลูกมีไข้ต่ำหลังฉีดวัคซีน', rec: 'สอนวิธีเช็ดตัวด้วยน้ำอุณหภูมิห้อง ดื่มน้ำ/กินนม และยาลดไข้' },
+        { text: '7. อาการฉุกเฉินที่ต้องรีบพาไปโรงพยาบาลทันที', rec: 'เน้นย้ำสัญญาณอันตราย: ไข้สูง ปากเขียว ชักเกร็ง ปลุกไม่ตื่น' },
+        { text: '8. ประโยชน์ของการนำสมุดชมพูมารับบริการทุกครั้ง', rec: 'กระตุ้นให้นำสมุดชมพูมาบันทึกและตรวจสอบประวัติวัคซีน' },
+        { text: '9. วิธีปฏิบัติเมื่อติดภารกิจ/อุปสรรคเดินทางในวันนัด', rec: 'แจ้งช่องทางติดต่อ อสม./รพ.สต. เพื่อช่วยปรับวันนัดหรือประสานงาน' },
+        { text: '10. ความเข้าใจถูกต้องเรื่องวัคซีนตามหลักศาสนาและความรัก', rec: 'สรุปว่าการป้องกันโรคเป็นหน้าที่และความรักของพ่อแม่' }
+      ];
+
+      items.forEach((item, i) => {
+        const acc = Number(accuracies[i] || 0);
+        let statusTag = '';
+        if (acc >= 75) {
+          statusTag = '<span class="chip" style="background:#C6F6D5; color:#22543D;">เข้าใจดีมาก</span>';
+        } else if (acc >= 50) {
+          statusTag = '<span class="chip" style="background:#FEFCBF; color:#744210;">เข้าใจปานกลาง</span>';
+        } else {
+          statusTag = '<span class="chip" style="background:#FED7D7; color:#742A2A;">ควรอธิบายเพิ่ม</span>';
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="padding: 8px; border: 1px solid #BEE3F8;">${item.text}</td>
+          <td style="padding: 8px; border: 1px solid #BEE3F8; text-align: center; font-weight: 700;">${acc.toFixed(1)}%</td>
+          <td style="padding: 8px; border: 1px solid #BEE3F8; text-align: center;">${statusTag}</td>
+          <td style="padding: 8px; border: 1px solid #BEE3F8;">${item.rec}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     function renderKsChart(averages) {

@@ -262,11 +262,23 @@ function getDashboardAnalytics(data) {
   });
   var ksOverallAvg = ksCount > 0 ? (ksTotalScoreSum / (ksCount * 8)).toFixed(2) : 0;
 
-  // Compute PreTest Averages
+  // Compute PreTest Averages & Itemized Accuracy (Q1..Q10)
+  var preAnswerKey = ['ข', 'ก', 'ข', 'ก', 'ก', 'ข', 'ข', 'ก', 'ข', 'ข'];
+  var preItemCorrectCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   var preTotalScoreSum = 0;
   var preCount = filteredPre.length;
+
   filteredPre.forEach(function(row) {
     preTotalScoreSum += Number(row.TotalScore || 0);
+    for (var k = 1; k <= 10; k++) {
+      if (row['Q' + k] === preAnswerKey[k - 1]) {
+        preItemCorrectCounts[k - 1]++;
+      }
+    }
+  });
+
+  var preItemAccuracies = preItemCorrectCounts.map(function(cCount) {
+    return preCount > 0 ? ((cCount / preCount) * 100).toFixed(1) : 0;
   });
   var preOverallAvg = preCount > 0 ? (preTotalScoreSum / preCount).toFixed(2) : 0;
 
@@ -274,6 +286,7 @@ function getDashboardAnalytics(data) {
     totalRespondents: ksCount,
     preTestCount: preCount,
     preTestAvgScore: preOverallAvg,
+    preItemAccuracies: preItemAccuracies,
     ksOverallAvg: ksOverallAvg,
     ksItemAverages: ksItemAverages,
     filterApplied: {
