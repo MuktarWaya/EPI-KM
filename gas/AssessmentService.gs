@@ -204,7 +204,8 @@ function getDashboardAnalytics(data) {
   var filterStartDate = data && data.startDate ? data.startDate : '';
   var filterEndDate = data && data.endDate ? data.endDate : '';
   var filterVillage = data && data.village ? data.village.trim() : 'ALL';
-  var rawSubdistrict = data && data.subdistrict ? data.subdistrict.trim().toLowerCase() : '';
+  var filterSubdistrict = data && data.subdistrict ? data.subdistrict.trim() : '';
+  var rawSubdistrict = filterSubdistrict.toLowerCase();
   var filterSessionId = data && data.sessionId ? data.sessionId : '';
 
   // Check if subdistrict filter matches ALL
