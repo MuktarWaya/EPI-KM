@@ -162,12 +162,37 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">ตำบล *</label>
-          <input type="text" class="form-control" id="subdistrict" required placeholder="เช่น ประจัน หรือ สาคอ">
-        </div>
-        <div class="form-group">
           <label class="form-label">อำเภอ *</label>
-          <input type="text" class="form-control" id="district" required placeholder="เช่น มายอ">
+          <select class="form-control" id="district" required onchange="handleDistrictChange()">
+            <option value="มายอ" selected>อำเภอมายอ</option>
+            <option value="เมืองปัตตานี">อำเภอเมืองปัตตานี</option>
+            <option value="โคกโพธิ์">อำเภอโคกโพธิ์</option>
+            <option value="หนองจิก">อำเภอหนองจิก</option>
+            <option value="ปะนาเระ">อำเภอปะนาเระ</option>
+            <option value="ทุ่งยางแดง">อำเภอทุ่งยางแดง</option>
+            <option value="สายบุรี">อำเภอสายบุรี</option>
+            <option value="ไม้แก่น">อำเภอไม้แก่น</option>
+            <option value="ยะหริ่ง">อำเภอยะหริ่ง</option>
+            <option value="ยะรัง">อำเภอยะรัง</option>
+            <option value="กะพ้อ">อำเภอกะพ้อ</option>
+            <option value="แม่ลาน">อำเภอแม่ลาน</option>
+            <option value="OTHER">-- ระบุอำเภออื่นนอกปัตตานี --</option>
+          </select>
+        </div>
+        <div class="form-group" id="districtOtherGroup" style="display: none;">
+          <label class="form-label">ระบุชื่ออำเภอ *</label>
+          <input type="text" class="form-control" id="districtOther" placeholder="เช่น เมืองยะลา หรือ รามัน">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ตำบล *</label>
+          <select class="form-control" id="subdistrict" required onchange="handleSubdistrictChange()">
+            <!-- Populated dynamically from DOPA dataset -->
+          </select>
+        </div>
+        <div class="form-group" id="subdistrictOtherGroup" style="display: none;">
+          <label class="form-label">ระบุชื่อตำบล *</label>
+          <input type="text" class="form-control" id="subdistrictOther" placeholder="เช่น สะเตง หรือ กายูบกอ">
         </div>
         <div class="form-group">
           <label class="form-label">บุคคลที่มีอิทธิพลต่อการตัดสินใจในการรับวัคซีน *</label>
@@ -804,6 +829,73 @@
       }
     }
 
+    const PATTANI_DOPA_DATA = {
+      "มายอ": ["มายอ", "ถนน", "ตรัง", "กระหวะ", "ลุโบะยิไร", "ลางา", "กระเสาะ", "เกาะจัน", "ปะโด", "สาคอบน", "สาคอใต้", "สะกำ", "ปานัน"],
+      "เมืองปัตตานี": ["สะบารัง", "อาเนาะรู", "จะบังติกอ", "บานา", "ตันหยงลุโละ", "คลองมานิง", "กะมิยอ", "บาราโหม", "ปะกาฮะรัง", "รูสะมิแล", "ตะลุโบะ", "บาราเฮาะ", "ปุยุด"],
+      "โคกโพธิ์": ["โคกโพธิ์", "มะกรูด", "บางโกระ", "ป่าบอน", "ทรายขาว", "นาประดู่", "ปากล่อ", "ทุ่งพลา", "ท่าเรือ", "นาเกตุ", "ควนโนรี", "ช้างให้ตก"],
+      "หนองจิก": ["เกาะเปาะ", "คอลอตันหยง", "ดอนรัก", "ดาโต๊ะ", "ตุยง", "ท่ากำชำ", "บ่อทอง", "บางเขา", "บางตาวา", "ปุโละปุโย", "ยาบี", "ลิปะสะโง"],
+      "ปะนาเระ": ["ปะนาเระ", "ท่าข้าม", "บ้านนอก", "ดอน", "ควน", "ท่าน้ำ", "คอกกระบือ", "พ่อมิ่ง", "บ้านกลาง", "บ้านน้ำบ่อ"],
+      "ทุ่งยางแดง": ["ตะโละแมะนา", "พิเทน", "น้ำดำ", "ปากู"],
+      "สายบุรี": ["ตะลุบัน", "ตะบิ้ง", "ปะเสยะวอ", "บางเก่า", "บือเระ", "เตราะบอน", "กะดุนง", "ละหาร", "มะนังดาลำ", "แป้น", "ทุ่งคล้า"],
+      "ไม้แก่น": ["ไทรทอง", "ไม้แก่น", "ตะโละไกรทอง", "ดอนทราย"],
+      "ยะหริ่ง": ["ตะโละ", "ตะโละกาโปร์", "ตันหยงดาลอ", "ตันหยงจึงงา", "ตอหลัง", "ตาแกะ", "ตาลีอายร์", "ยามู", "บางปู", "หนองแรต", "ปิยามุมัง", "ปุลากง", "บาโลย", "สาบัน", "มะนังยง", "ราตาปันยัง", "จะรัง", "แหลมโพธิ์"],
+      "ยะรัง": ["ยะรัง", "สะดาวา", "ประจัน", "สะนอ", "ระแว้ง", "ปิตูมุดี", "วัด", "กระโด", "คลองใหม่", "เมาะมาวี", "กอลำ", "เขาตูม"],
+      "กะพ้อ": ["กะรุบี", "ตะโละดือรามัน", "ปล่องหอย"],
+      "แม่ลาน": ["แม่ลาน", "ม่วงเตี้ย", "ป่าไร่"]
+    };
+
+    function handleDistrictChange() {
+      const distSelect = document.getElementById('district');
+      const subSelect = document.getElementById('subdistrict');
+      const distOtherGroup = document.getElementById('districtOtherGroup');
+      const distOtherInput = document.getElementById('districtOther');
+      const subOtherGroup = document.getElementById('subdistrictOtherGroup');
+      const subOtherInput = document.getElementById('subdistrictOther');
+
+      if (!distSelect || !subSelect) return;
+      const selectedDist = distSelect.value;
+
+      if (selectedDist === 'OTHER') {
+        if (distOtherGroup) distOtherGroup.style.display = 'block';
+        if (distOtherInput) distOtherInput.required = true;
+        subSelect.innerHTML = '<option value="OTHER">-- ระบุตำบลอื่น --</option>';
+        if (subOtherGroup) subOtherGroup.style.display = 'block';
+        if (subOtherInput) subOtherInput.required = true;
+        return;
+      }
+
+      if (distOtherGroup) distOtherGroup.style.display = 'none';
+      if (distOtherInput) { distOtherInput.required = false; distOtherInput.value = ''; }
+
+      const subList = PATTANI_DOPA_DATA[selectedDist] || [];
+      let optionsHtml = '<option value="">-- เลือกตำบล --</option>';
+      subList.forEach(t => {
+        optionsHtml += `<option value="${t}">${t}</option>`;
+      });
+      optionsHtml += '<option value="OTHER">-- ระบุตำบลอื่น --</option>';
+
+      subSelect.innerHTML = optionsHtml;
+      if (subList.length > 0) {
+        subSelect.value = subList[0];
+      }
+      handleSubdistrictChange();
+    }
+
+    function handleSubdistrictChange() {
+      const subSelect = document.getElementById('subdistrict');
+      const subOtherGroup = document.getElementById('subdistrictOtherGroup');
+      const subOtherInput = document.getElementById('subdistrictOther');
+      if (!subSelect) return;
+
+      if (subSelect.value === 'OTHER') {
+        if (subOtherGroup) subOtherGroup.style.display = 'block';
+        if (subOtherInput) subOtherInput.required = true;
+      } else {
+        if (subOtherGroup) subOtherGroup.style.display = 'none';
+        if (subOtherInput) { subOtherInput.required = false; subOtherInput.value = ''; }
+      }
+    }
+
     function toggleInfluencerOther() {
       const val = document.getElementById('decisionInfluencer') ? document.getElementById('decisionInfluencer').value : '';
       const otherGroup = document.getElementById('influencerOtherGroup');
@@ -825,6 +917,16 @@
         influencerVal = customText ? `อื่นๆ (${customText})` : 'อื่นๆ';
       }
 
+      let districtVal = document.getElementById('district') ? document.getElementById('district').value : '';
+      if (districtVal === 'OTHER') {
+        districtVal = (document.getElementById('districtOther') ? document.getElementById('districtOther').value : '').trim();
+      }
+
+      let subdistrictVal = document.getElementById('subdistrict') ? document.getElementById('subdistrict').value : '';
+      if (subdistrictVal === 'OTHER') {
+        subdistrictVal = (document.getElementById('subdistrictOther') ? document.getElementById('subdistrictOther').value : '').trim();
+      }
+
       const payload = {
         sessionId: currentSessionId,
         parentName: document.getElementById('parentName').value,
@@ -834,8 +936,8 @@
         birthDate: document.getElementById('birthDate').value,
         houseNo: document.getElementById('houseNo') ? document.getElementById('houseNo').value : '',
         village: document.getElementById('village').value,
-        subdistrict: document.getElementById('subdistrict') ? document.getElementById('subdistrict').value : '',
-        district: document.getElementById('district') ? document.getElementById('district').value : '',
+        subdistrict: subdistrictVal,
+        district: districtVal,
         influencers: influencerVal,
         consent: true,
         hasVaccineBook: true
@@ -1494,6 +1596,10 @@
         tbody.appendChild(tr);
       });
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      handleDistrictChange();
+    });
   </script>
 </body>
 </html>
