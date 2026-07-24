@@ -148,7 +148,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">หมู่บ้าน *</label>
-          <select class="form-control" id="village" required>
+          <select class="form-control" id="village" required onchange="handleVillageChange()">
             <option value="">-- เลือกหมู่บ้าน --</option>
             <option value="หมู่ที่ 1">หมู่ที่ 1</option>
             <option value="หมู่ที่ 2">หมู่ที่ 2</option>
@@ -159,7 +159,23 @@
             <option value="หมู่ที่ 7">หมู่ที่ 7</option>
             <option value="หมู่ที่ 8">หมู่ที่ 8</option>
             <option value="หมู่ที่ 9">หมู่ที่ 9</option>
+            <option value="หมู่ที่ 10">หมู่ที่ 10</option>
+            <option value="หมู่ที่ 11">หมู่ที่ 11</option>
+            <option value="หมู่ที่ 12">หมู่ที่ 12</option>
+            <option value="หมู่ที่ 13">หมู่ที่ 13</option>
+            <option value="หมู่ที่ 14">หมู่ที่ 14</option>
+            <option value="หมู่ที่ 15">หมู่ที่ 15</option>
+            <option value="หมู่ที่ 16">หมู่ที่ 16</option>
+            <option value="หมู่ที่ 17">หมู่ที่ 17</option>
+            <option value="หมู่ที่ 18">หมู่ที่ 18</option>
+            <option value="หมู่ที่ 19">หมู่ที่ 19</option>
+            <option value="หมู่ที่ 20">หมู่ที่ 20</option>
+            <option value="OTHER">-- ระบุหมู่บ้านอื่น / ชื่อชุมชน --</option>
           </select>
+        </div>
+        <div class="form-group" id="villageOtherGroup" style="display: none;">
+          <label class="form-label">ระบุชื่อหมู่บ้านหรือชุมชน *</label>
+          <input type="text" class="form-control" id="villageOther" placeholder="เช่น ชุมชนจะบังติกอ หรือ ชุมชนบานา">
         </div>
         <div class="form-group">
           <label class="form-label">อำเภอ *</label>
@@ -496,6 +512,17 @@
               <option value="หมู่ที่ 7">หมู่ที่ 7</option>
               <option value="หมู่ที่ 8">หมู่ที่ 8</option>
               <option value="หมู่ที่ 9">หมู่ที่ 9</option>
+              <option value="หมู่ที่ 10">หมู่ที่ 10</option>
+              <option value="หมู่ที่ 11">หมู่ที่ 11</option>
+              <option value="หมู่ที่ 12">หมู่ที่ 12</option>
+              <option value="หมู่ที่ 13">หมู่ที่ 13</option>
+              <option value="หมู่ที่ 14">หมู่ที่ 14</option>
+              <option value="หมู่ที่ 15">หมู่ที่ 15</option>
+              <option value="หมู่ที่ 16">หมู่ที่ 16</option>
+              <option value="หมู่ที่ 17">หมู่ที่ 17</option>
+              <option value="หมู่ที่ 18">หมู่ที่ 18</option>
+              <option value="หมู่ที่ 19">หมู่ที่ 19</option>
+              <option value="หมู่ที่ 20">หมู่ที่ 20</option>
             </select>
           </div>
         </div>
@@ -896,6 +923,21 @@
       }
     }
 
+    function handleVillageChange() {
+      const vSelect = document.getElementById('village');
+      const vOtherGroup = document.getElementById('villageOtherGroup');
+      const vOtherInput = document.getElementById('villageOther');
+      if (!vSelect) return;
+
+      if (vSelect.value === 'OTHER') {
+        if (vOtherGroup) vOtherGroup.style.display = 'block';
+        if (vOtherInput) vOtherInput.required = true;
+      } else {
+        if (vOtherGroup) vOtherGroup.style.display = 'none';
+        if (vOtherInput) { vOtherInput.required = false; vOtherInput.value = ''; }
+      }
+    }
+
     function toggleInfluencerOther() {
       const val = document.getElementById('decisionInfluencer') ? document.getElementById('decisionInfluencer').value : '';
       const otherGroup = document.getElementById('influencerOtherGroup');
@@ -917,6 +959,11 @@
         influencerVal = customText ? `อื่นๆ (${customText})` : 'อื่นๆ';
       }
 
+      let villageVal = document.getElementById('village') ? document.getElementById('village').value : '';
+      if (villageVal === 'OTHER') {
+        villageVal = (document.getElementById('villageOther') ? document.getElementById('villageOther').value : '').trim();
+      }
+
       let districtVal = document.getElementById('district') ? document.getElementById('district').value : '';
       if (districtVal === 'OTHER') {
         districtVal = (document.getElementById('districtOther') ? document.getElementById('districtOther').value : '').trim();
@@ -935,7 +982,7 @@
         childName: document.getElementById('childName').value,
         birthDate: document.getElementById('birthDate').value,
         houseNo: document.getElementById('houseNo') ? document.getElementById('houseNo').value : '',
-        village: document.getElementById('village').value,
+        village: villageVal,
         subdistrict: subdistrictVal,
         district: districtVal,
         influencers: influencerVal,
